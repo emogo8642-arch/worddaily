@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="WordDaily — трекер английских слов: 1000 слов на 100 дней, интервальное повторение, карточки и видеоуроки.">
+<meta name="theme-color" content="#5b5bd6">
+<title>WordDaily — 10 английских слов каждый день</title>
+<style>
+:root{
+  --bg:#f4f5fb; --surface:#ffffff; --surface2:#f6f7fc; --text:#15182b; --muted:#6b7280;
+  --line:#e6e8f2; --accent:#5b5bd6; --accent2:#8b5cf6; --accent-soft:#eef0ff;
+  --green:#16a34a; --green-soft:#e9f9ef; --green-line:#b7e4c7;
+  --danger:#dc2626; --shadow:0 1px 2px rgba(16,24,40,.05); --radius:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0d0f16; --surface:#151823; --surface2:#1b1f2c; --text:#eef0f8; --muted:#98a1b3;
+    --line:#252b3a; --accent:#8b8bfa; --accent2:#a78bfa; --accent-soft:#1e2140;
+    --green:#22c55e; --green-soft:#12261b; --green-line:#1f5136;
+    --danger:#fb7185; --shadow:0 1px 2px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.app{max-width:1120px;margin:0 auto;padding:0 20px 60px}
+.hidden{display:none!important}
+
+/* ---------- header ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:26px 0 18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 8px 20px -8px rgba(99,102,241,.9);
+}
+.brand h1{font-size:18px;margin:0;letter-spacing:-.02em}
+.brand p{margin:1px 0 0;font-size:12px;color:var(--muted)}
+.topstats{display:flex;gap:8px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:8px 13px;font-size:12.5px;color:var(--muted);box-shadow:var(--shadow);white-space:nowrap;
+}
+.pill b{color:var(--text);font-size:13px}
+
+/* ---------- tabs ---------- */
+.tabs{
+  display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--line);
+  padding:5px;border-radius:14px;box-shadow:var(--shadow);margin:4px 0 22px;max-width:100%;flex-wrap:wrap;
+}
+.tabs button{
+  border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:13.5px;
+  padding:9px 16px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.18s;
+}
+.tabs button:hover{color:var(--text)}
+.tabs button.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+  box-shadow:0 8px 18px -8px rgba(99,102,241,.9);
+}
+.badge{background:rgba(255,255,255,.25);border-radius:999px;padding:1px 7px;font-size:11px;font-weight:800}
+.tabs button:not(.active) .badge{background:var(--accent-soft);color:var(--accent)}
+
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.side-col{display:flex;flex-direction:column;gap:14px;position:sticky;top:16px}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .side-col{position:static;order:2}
+}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h3{font-size:13.5px;margin:0 0 12px;font-weight:800;letter-spacing:-.01em}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.55;margin:0}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;overflow:hidden;border-radius:22px;padding:26px 28px;color:#fff;
+  background:linear-gradient(135deg,#5b5bd6 0%,#8b5cf6 60%,#a855f7 100%);
+  box-shadow:0 20px 44px -20px rgba(91,91,214,.7);
+}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero::before{width:220px;height:220px;right:-70px;top:-90px}
+.hero::after{width:150px;height:150px;left:-60px;bottom:-90px;background:rgba(255,255,255,.08)}
+.hero>*{position:relative;z-index:1}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;opacity:.9;flex-wrap:wrap}
+.hero h2{margin:10px 0 18px;font-size:28px;line-height:1.15;letter-spacing:-.025em}
+.hero-progress{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:700}
+.hero .bar{flex:1;height:8px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden;border:0;margin:0}
+.hero .bar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
+.hero-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{border:0;border-radius:11px;padding:10px 17px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:.18s}
+.btn-light{background:#fff;color:#4f46e5;box-shadow:0 8px 20px -8px rgba(0,0,0,.4)}
+.btn-light:hover{transform:translateY(-1px)}
+.btn-ghost-light{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.btn-ghost-light:hover{background:rgba(255,255,255,.24)}
+@media (max-width:560px){.hero{padding:22px}.hero h2{font-size:23px}}
+
+/* ---------- day nav ---------- */
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 14px}
+.iconbtn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.18s;box-shadow:var(--shadow);
+}
+.iconbtn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.iconbtn:disabled{opacity:.35;cursor:default}
+#daynavLabel{font-size:14px;font-weight:700;color:var(--muted);text-align:center}
+
+/* ---------- word cards ---------- */
+.word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.word-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:17px 18px 14px;
+  cursor:pointer;box-shadow:var(--shadow);transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.word-card:hover{transform:translateY(-2px);border-color:rgba(99,102,241,.45);box-shadow:0 12px 28px -18px rgba(16,24,40,.45)}
+.word-card.learned{border-color:var(--green-line)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.num{font-size:11px;letter-spacing:.1em;color:var(--muted);font-weight:800}
+.speak{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface2);
+  color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s;flex:none;
+}
+.speak:hover{color:var(--accent);border-color:var(--accent)}
+.speak.small{width:26px;height:26px}
+.en{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px;word-break:break-word}
+.ipa{font-size:13px;color:var(--muted);margin-top:2px}
+.answer{display:none;margin-top:13px;padding-top:12px;border-top:1px dashed var(--line);animation:fade .25s ease}
+.word-card.revealed .answer{display:block}
+.translation{font-size:15.5px;font-weight:700}
+.ex{font-size:13px;color:var(--muted);font-style:italic;margin-top:5px;line-height:1.45}
+.reveal-btn{background:none;border:0;padding:0;margin-top:12px;font:inherit;font-size:12.5px;font-weight:700;color:var(--accent);cursor:pointer}
+.reveal-btn:hover{text-decoration:underline}
+.card-bottom{display:flex;justify-content:flex-end;margin-top:12px}
+.learn-btn{
+  padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);
+  font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:.18s;
+}
+.learn-btn:hover{color:var(--accent);border-color:var(--accent)}
+.learn-btn.on{background:var(--green-soft);color:var(--green);border-color:var(--green-line)}
+@keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+
+/* ---------- sidebar ---------- */
+.stat-big{font-size:34px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-.03em;line-height:1}
+.stat-label{color:var(--muted);font-size:13px;margin:4px 0 14px}
+.stat-row{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding:5px 0}
+.stat-row b{color:var(--text)}
+.bar{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:10px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .4s}
+.heatmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(16px,1fr));gap:5px}
+.cell{aspect-ratio:1;border-radius:6px;background:var(--surface2);border:1px solid var(--line);cursor:pointer;transition:.15s}
+.cell:hover{transform:scale(1.09)}
+.cell.part{background:var(--accent-soft);border-color:transparent}
+.cell.done{background:var(--green);border-color:transparent}
+.cell.future{opacity:.35;cursor:default}
+.cell.future:hover{transform:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{width:9px;height:9px;border-radius:3px;background:var(--surface2);border:1px solid var(--line);display:inline-block}
+.dot.part{background:var(--accent-soft);border-color:transparent}
+.dot.done{background:var(--green);border-color:transparent}
+.link-danger{background:none;border:0;color:var(--danger);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:8px 2px;text-align:left}
+.link-danger:hover{text-decoration:underline}
+
+/* ---------- review ---------- */
+.review-wrap{max-width:640px;margin:0 auto}
+.review-head{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.review-bar{height:6px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.review-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .35s}
+.flashcard{
+  background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:42px 32px 34px;text-align:center;
+  box-shadow:0 24px 60px -34px rgba(16,24,40,.5);min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.flash-word{font-size:42px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+.flash-ipa{color:var(--muted);margin-top:6px;font-size:15px}
+.flash-answer{margin-top:22px;padding-top:20px;border-top:1px dashed var(--line);width:100%;animation:fade .25s ease}
+.flash-ru{font-size:23px;font-weight:800;letter-spacing:-.02em}
+.flash-ex{font-size:14px;color:var(--muted);font-style:italic;margin-top:8px}
+.flash-actions{display:flex;gap:10px;margin-top:26px;justify-content:center;flex-wrap:wrap}
+.btn-again{
+  background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:12px 20px;border-radius:12px;
+  font:inherit;font-weight:700;font-size:15px;cursor:pointer;transition:.18s;
+}
+.btn-again:hover{border-color:var(--accent);color:var(--accent)}
+.btn-know{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;padding:12px 26px;border-radius:12px;
+  font:inherit;font-weight:700;font-size:15px;cursor:pointer;transition:.18s;
+  box-shadow:0 12px 26px -12px rgba(99,102,241,.9);
+}
+.btn-know:hover{transform:translateY(-1px)}
+.reveal-main{margin-top:6px;padding:13px 26px}
+.kbd-hint{text-align:center;font-size:11.5px;color:var(--muted);margin-top:14px}
+.empty{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:56px 28px;text-align:center;box-shadow:var(--shadow)}
+.empty-emoji{font-size:44px;margin-bottom:8px}
+.empty h2{margin:6px 0 8px;font-size:22px;letter-spacing:-.02em}
+.empty p{color:var(--muted);font-size:14px;margin:0 auto 20px;max-width:400px;line-height:1.5}
+.empty .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-soft{
+  background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:11px 18px;border-radius:11px;
+  font:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:.18s;
+}
+.btn-soft:hover{border-color:var(--accent);color:var(--accent)}
+@media (max-width:560px){.flashcard{padding:32px 20px 26px;min-height:300px}.flash-word{font-size:32px}}
+
+/* ---------- dictionary ---------- */
+.dict-tools{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+#search,#notebookSearch{
+  width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);font:inherit;font-size:15px;outline:none;transition:.18s;box-shadow:var(--shadow);
+}
+#search:focus,#notebookSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+#search::placeholder,#notebookSearch::placeholder{color:var(--muted)}
+.nb-form{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.nb-form input{
+  flex:1 1 180px;min-width:0;padding:12px 14px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);font:inherit;font-size:14.5px;outline:none;transition:.18s;box-shadow:var(--shadow);
+}
+.nb-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.nb-form input::placeholder{color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{
+  padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);
+  font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:.18s;
+}
+.chips button:hover{color:var(--text)}
+.chips button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+.dict-list{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.dict-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.dict-row:last-child{border-bottom:0}
+.dict-row:hover{background:var(--surface2)}
+.dict-row.learned{background:linear-gradient(90deg,var(--green-soft),transparent 55%)}
+.dict-main{min-width:0}
+.dw{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dipa{font-size:12px;font-weight:500;color:var(--muted)}
+.dru{font-size:13px;color:var(--muted);margin-top:2px}
+.dex{font-style:italic;opacity:.8}
+.dict-side{display:flex;align-items:center;gap:10px;flex:none}
+.daytag{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.dict-side .learn-btn{padding:6px 10px}
+.empty-small{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
+@media (max-width:560px){.dex{display:none}.daytag{display:none}}
+
+/* ---------- video ---------- */
+.video-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.video-head h2{margin:0 0 4px;font-size:24px;letter-spacing:-.025em}
+.video-head p{margin:0;color:var(--muted);font-size:13.5px}
+.video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 24px 60px -34px rgba(16,24,40,.55);margin-bottom:18px}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-head .btn-soft{text-decoration:none;display:inline-flex;align-items:center}
+.video-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;text-decoration:none;color:#fff;background:linear-gradient(180deg,rgba(10,12,20,.2),rgba(10,12,20,.9)),url("https://i.ytimg.com/vi/Hp9wUEDasY4/hqdefault.jpg") center/cover no-repeat}
+.video-play{width:64px;height:64px;border-radius:50%;background:#ff0033;display:grid;place-items:center;font-size:22px;padding-left:4px;box-shadow:0 12px 30px rgba(255,0,51,.35)}
+.video-fallback-text{display:flex;flex-direction:column;gap:4px}
+.video-fallback-text b{font-size:18px;letter-spacing:-.01em}
+.video-fallback-text small{color:rgba(255,255,255,.75);font-size:13px}
+.video-nav{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.video-nav-top{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.lesson-list{max-height:400px;overflow-y:auto;margin:0 -16px;padding:0 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lesson-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
+.lesson-item:last-child{border-bottom:0}
+.lesson-item:hover{background:var(--surface2);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
+.lesson-item.active{background:linear-gradient(90deg,var(--accent-soft),transparent 60%)}
+.lesson-label{font-size:14px;font-weight:700;min-width:0}
+.lesson-kind{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap;flex:none}
+.video-nav-footer{display:flex;gap:10px;margin-top:14px;justify-content:space-between}
+@media (max-width:700px){.video-nav-footer{flex-direction:column}}
+
+footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div>
+        <h1>WordDaily</h1>
+        <p>10 английских слов каждый день</p>
+      </div>
+    </div>
+    <div class="topstats">
+      <div class="pill">🔥 <b id="streakTop">0</b></div>
+      <div class="pill">Выучено <b id="learnedTop">0</b>/<span id="totalTop">300</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button type="button" data-tab="today" class="active">Сегодня</button>
+    <button type="button" data-tab="review">Повторение <span class="badge" id="dueBadge">0</span></button>
+    <button type="button" data-tab="video">Видео</button>
+    <button type="button" data-tab="dictionary">Словарь</button>
+    <button type="button" data-tab="notebook">Слова из плейлиста</button>
+  </nav>
+
+  <main>
+    <section id="tab-today" class="tab-panel">
+      <div class="layout">
+        <div class="main-col">
+          <div class="hero">
+            <div class="hero-top"><span id="heroKicker">День 1 из 30</span><span id="heroDate"></span></div>
+            <h2 id="heroTitle">10 новых слов</h2>
+            <div class="hero-progress"><div class="bar"><i id="heroBar" style="width:0%"></i></div><span id="heroCount">0 / 10</span></div>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-light" id="startCards">Учить карточками</button>
+              <button type="button" class="btn btn-ghost-light" id="revealAll">Показать переводы</button>
+            </div>
+          </div>
+          <div class="daynav">
+            <button type="button" class="iconbtn" id="prevDay" aria-label="Предыдущий день">←</button>
+            <div id="daynavLabel">День 1</div>
+            <button type="button" class="iconbtn" id="nextDay" aria-label="Следующий день">→</button>
+          </div>
+          <div id="wordList" class="word-grid"></div>
+        </div>
+        <aside class="side-col">
+          <div class="card">
+            <div class="stat-big">🔥 <span id="streakBig">0</span></div>
+            <div class="stat-label">дней подряд</div>
+            <div class="stat-row"><span>Пройдено дней</span><b id="daysDone">0 / 30</b></div>
+            <div class="stat-row"><span>Выучено слов</span><b id="wordsDone">0 / 300</b></div>
+            <div class="bar"><i id="totalBar" style="width:0%"></i></div>
+          </div>
+          <div class="card">
+            <h3>Прогресс курса</h3>
+            <div id="heatmap" class="heatmap"></div>
+            <div class="legend">
+              <span><i class="dot done"></i>пройден</span>
+              <span><i class="dot part"></i>частично</span>
+              <span><i class="dot"></i>пусто</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Как это работает</h3>
+            <p class="hint">Каждый день открывается новый набор из 10 слов по теме. Отмечайте слова, которые запомнили, — так закрывается день и растёт серия. Карточки и повторение подбираются автоматически.</p>
+          </div>
+          <button type="button" class="link-danger" id="resetBtn">Сбросить прогресс</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tab-review" class="tab-panel hidden">
+      <div id="reviewWrap" class="review-wrap"></div>
+    </section>
+
+    <section id="tab-video" class="tab-panel hidden">
+      <div class="video-head">
+        <div>
+          <h2>Английский язык до автоматизма</h2>
+          <p id="videoSubtitle">Полный курс · 1033 видео · плейлист целиком</p>
+        </div>
+        <a class="btn-soft" href="https://www.youtube.com/playlist?list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X" target="_blank" rel="noopener">Открыть на YouTube</a>
+      </div>
+      <div class="video-frame" id="videoFrame"></div>
+      <div class="video-nav">
+        <div class="video-nav-top">
+          <input id="lessonSearch" type="search" placeholder="Искать урок по номеру или названию…" autocomplete="off">
+          <div class="chips" id="lessonFilters">
+            <button type="button" data-kind="all" class="active">Все</button>
+            <button type="button" data-kind="0">Уроки</button>
+            <button type="button" data-kind="1">Практика</button>
+            <button type="button" data-kind="2">Контрольные</button>
+          </div>
+        </div>
+        <div id="lessonList" class="lesson-list"></div>
+        <div class="video-nav-footer">
+          <button type="button" class="btn btn-ghost-light" id="prevLesson">← Пред. урок</button>
+          <button type="button" class="btn btn-ghost-light" id="nextLesson">След. урок →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-notebook" class="tab-panel hidden">
+      <div class="dict-tools">
+        <div class="nb-form">
+          <input id="nbEn" type="text" placeholder="Английское слово или фраза" autocomplete="off">
+          <input id="nbRu" type="text" placeholder="Перевод" autocomplete="off">
+          <button type="button" class="btn btn-light" id="nbSave">Добавить</button>
+          <button type="button" class="btn-soft hidden" id="nbCancel">Отмена</button>
+        </div>
+        <input id="notebookSearch" type="search" placeholder="Поиск слова или перевода…" autocomplete="off">
+      </div>
+      <div id="notebookList" class="dict-list"></div>
+    </section>
+
+    <section id="tab-dictionary" class="tab-panel hidden">
+      <div class="dict-tools">
+        <input id="search" type="search" placeholder="Поиск слова или перевода…" autocomplete="off">
+        <div class="chips" id="filters">
+          <button type="button" data-f="all" class="active">Все</button>
+          <button type="button" data-f="learned">Выученные</button>
+          <button type="button" data-f="progress">В процессе</button>
+          <button type="button" data-f="new">Новые</button>
+        </div>
+      </div>
+      <div id="dictList" class="dict-list"></div>
+    </section>
+  </main>
+
+  <footer>Прогресс хранится локально в браузере · WordDaily</footer>
+</div>
+<script>
+"use strict";
+
+/* ====== СЛОВАРЬ: 30 дней × 10 слов ====== */
+const BASE_COURSE = [
+  { theme: "Базовые глаголы", items: [
+    ["be", "biː", "быть", "I want to be happy."],
+    ["have", "hæv", "иметь", "We have two cats."],
+    ["do", "duː", "делать", "What do you do?"],
+    ["go", "ɡəʊ", "идти, ехать", "Let's go home."],
+    ["make", "meɪk", "делать, создавать", "She makes great coffee."],
+    ["take", "teɪk", "брать", "Take an umbrella."],
+    ["get", "ɡet", "получать", "I got your message."],
+    ["give", "ɡɪv", "давать", "Give me a minute."],
+    ["come", "kʌm", "приходить", "Come to my party."],
+    ["see", "siː", "видеть", "I can see the sea."]
+  ]},
+  { theme: "Люди и отношения", items: [
+    ["people", "ˈpiːpl", "люди", "People are waiting outside."],
+    ["friend", "frend", "друг", "He is my best friend."],
+    ["family", "ˈfæməli", "семья", "My family lives in Sochi."],
+    ["neighbour", "ˈneɪbə", "сосед", "Our neighbour is very kind."],
+    ["colleague", "ˈkɒliːɡ", "коллега", "She is a colleague of mine."],
+    ["stranger", "ˈstreɪndʒə", "незнакомец", "Don't talk to strangers."],
+    ["relative", "ˈrelətɪv", "родственник", "We visit our relatives every summer."],
+    ["partner", "ˈpɑːtnə", "партнёр", "He is my business partner."],
+    ["child", "tʃaɪld", "ребёнок", "The child is asleep."],
+    ["adult", "ˈædʌlt", "взрослый", "Tickets for adults cost ten pounds."]
+  ]},
+  { theme: "Дом и вещи", items: [
+    ["house", "haʊs", "дом", "They bought a new house."],
+    ["room", "ruːm", "комната", "This room is too dark."],
+    ["door", "dɔː", "дверь", "Please close the door."],
+    ["window", "ˈwɪndəʊ", "окно", "Open the window, it's hot."],
+    ["furniture", "ˈfɜːnɪtʃə", "мебель", "We need new furniture."],
+    ["kitchen", "ˈkɪtʃɪn", "кухня", "She is cooking in the kitchen."],
+    ["floor", "flɔː", "пол, этаж", "The keys are on the floor."],
+    ["key", "kiː", "ключ", "I lost my keys."],
+    ["towel", "ˈtaʊəl", "полотенце", "Bring me a clean towel."],
+    ["lamp", "læmp", "лампа", "Turn on the lamp, please."]
+  ]},
+  { theme: "Еда и напитки", items: [
+    ["bread", "bred", "хлеб", "Buy some fresh bread."],
+    ["cheese", "tʃiːz", "сыр", "This cheese smells strong."],
+    ["meal", "miːl", "приём пищи, блюдо", "We had a lovely meal."],
+    ["breakfast", "ˈbrekfəst", "завтрак", "I never skip breakfast."],
+    ["snack", "snæk", "перекус", "I need a quick snack."],
+    ["vegetable", "ˈvedʒtəbl", "овощ", "Eat more vegetables."],
+    ["fruit", "fruːt", "фрукт", "Fruit is good for you."],
+    ["salt", "sɔːlt", "соль", "Add a pinch of salt."],
+    ["sugar", "ˈʃʊɡə", "сахар", "No sugar in my coffee, please."],
+    ["delicious", "dɪˈlɪʃəs", "вкусный", "The soup was delicious."]
+  ]},
+  { theme: "Работа и офис", items: [
+    ["job", "dʒɒb", "работа", "She found a new job."],
+    ["office", "ˈɒfɪs", "офис", "I work in a small office."],
+    ["meeting", "ˈmiːtɪŋ", "встреча", "The meeting starts at nine."],
+    ["deadline", "ˈdedlaɪn", "срок", "We missed the deadline."],
+    ["task", "tɑːsk", "задача", "This task is urgent."],
+    ["boss", "bɒs", "начальник", "My boss is on holiday."],
+    ["salary", "ˈsæləri", "зарплата", "The salary is paid monthly."],
+    ["project", "ˈprɒdʒekt", "проект", "The project is almost finished."],
+    ["report", "rɪˈpɔːt", "отчёт", "Send me the report by Friday."],
+    ["schedule", "ˈʃedjuːl", "расписание", "My schedule is full today."]
+  ]},
+  { theme: "Время и даты", items: [
+    ["hour", "ˈaʊə", "час", "It takes an hour."],
+    ["minute", "ˈmɪnɪt", "минута", "Wait a minute."],
+    ["week", "wiːk", "неделя", "See you next week."],
+    ["month", "mʌnθ", "месяц", "We move next month."],
+    ["year", "jɪə", "год", "It was a hard year."],
+    ["today", "təˈdeɪ", "сегодня", "Today is Monday."],
+    ["tomorrow", "təˈmɒrəʊ", "завтра", "I'll call you tomorrow."],
+    ["yesterday", "ˈjestədeɪ", "вчера", "Yesterday was sunny."],
+    ["century", "ˈsentʃəri", "век", "The building is a century old."],
+    ["early", "ˈɜːli", "рано", "I woke up early."]
+  ]},
+  { theme: "Путешествия", items: [
+    ["travel", "ˈtrævl", "путешествовать", "I love to travel."],
+    ["ticket", "ˈtɪkɪt", "билет", "I bought two tickets."],
+    ["train", "treɪn", "поезд", "The train is late."],
+    ["airport", "ˈeəpɔːt", "аэропорт", "We arrived at the airport early."],
+    ["flight", "flaɪt", "рейс, полёт", "My flight was cancelled."],
+    ["luggage", "ˈlʌɡɪdʒ", "багаж", "Where is my luggage?"],
+    ["passport", "ˈpɑːspɔːt", "паспорт", "Show me your passport."],
+    ["journey", "ˈdʒɜːni", "поездка", "The journey takes six hours."],
+    ["arrive", "əˈraɪv", "прибывать", "We arrive at noon."],
+    ["depart", "dɪˈpɑːt", "отправляться", "The bus departs in ten minutes."]
+  ]},
+  { theme: "Город и места", items: [
+    ["street", "striːt", "улица", "The street is very noisy."],
+    ["square", "skweə", "площадь", "Meet me in the square."],
+    ["bridge", "brɪdʒ", "мост", "The bridge is closed."],
+    ["museum", "mjuˈziːəm", "музей", "The museum opens at ten."],
+    ["library", "ˈlaɪbrəri", "библиотека", "I study at the library."],
+    ["hospital", "ˈhɒspɪtl", "больница", "Take him to the hospital."],
+    ["station", "ˈsteɪʃn", "станция, вокзал", "The station is nearby."],
+    ["corner", "ˈkɔːnə", "угол", "The shop is around the corner."],
+    ["neighbourhood", "ˈneɪbəhʊd", "район", "It's a quiet neighbourhood."],
+    ["crowd", "kraʊd", "толпа", "A crowd gathered outside."]
+  ]},
+  { theme: "Природа и погода", items: [
+    ["weather", "ˈweðə", "погода", "The weather is lovely today."],
+    ["rain", "reɪn", "дождь", "The rain stopped at noon."],
+    ["snow", "snəʊ", "снег", "Snow covered the garden."],
+    ["wind", "wɪnd", "ветер", "The wind is strong today."],
+    ["sun", "sʌn", "солнце", "The sun is shining."],
+    ["cloud", "klaʊd", "облако", "Not a cloud in the sky."],
+    ["forest", "ˈfɒrɪst", "лес", "We walked through the forest."],
+    ["river", "ˈrɪvə", "река", "The river is deep here."],
+    ["mountain", "ˈmaʊntən", "гора", "They climbed the mountain."],
+    ["island", "ˈaɪlənd", "остров", "We spent a week on the island."]
+  ]},
+  { theme: "Тело и здоровье", items: [
+    ["head", "hed", "голова", "My head hurts."],
+    ["hand", "hænd", "рука", "Wash your hands."],
+    ["heart", "hɑːt", "сердце", "My heart is racing."],
+    ["blood", "blʌd", "кровь", "They took a blood test."],
+    ["pain", "peɪn", "боль", "I feel a sharp pain."],
+    ["health", "helθ", "здоровье", "Health comes first."],
+    ["medicine", "ˈmedsn", "лекарство", "Take the medicine twice a day."],
+    ["doctor", "ˈdɒktə", "врач", "You should see a doctor."],
+    ["tired", "ˈtaɪəd", "усталый", "I'm too tired to cook."],
+    ["sleep", "sliːp", "спать, сон", "I need more sleep."]
+  ]},
+  { theme: "Эмоции", items: [
+    ["happy", "ˈhæpi", "счастливый", "I'm happy to see you."],
+    ["sad", "sæd", "грустный", "Why do you look sad?"],
+    ["angry", "ˈæŋɡri", "злой", "Don't get angry with me."],
+    ["afraid", "əˈfreɪd", "испуганный", "I'm afraid of heights."],
+    ["excited", "ɪkˈsaɪtɪd", "взволнованный", "The kids are excited."],
+    ["nervous", "ˈnɜːvəs", "нервничающий", "I feel nervous before exams."],
+    ["proud", "praʊd", "гордый", "We are proud of you."],
+    ["surprised", "səˈpraɪzd", "удивлённый", "I was surprised by the news."],
+    ["bored", "bɔːd", "скучающий", "The students look bored."],
+    ["grateful", "ˈɡreɪtfl", "благодарный", "I'm grateful for your help."]
+  ]},
+  { theme: "Характер", items: [
+    ["kind", "kaɪnd", "добрый", "She is a kind person."],
+    ["honest", "ˈɒnɪst", "честный", "Be honest with me."],
+    ["brave", "breɪv", "смелый", "That was a brave decision."],
+    ["polite", "pəˈlaɪt", "вежливый", "He is always polite."],
+    ["lazy", "ˈleɪzi", "ленивый", "Don't be lazy."],
+    ["patient", "ˈpeɪʃnt", "терпеливый", "You must be patient."],
+    ["shy", "ʃaɪ", "застенчивый", "She is too shy to speak."],
+    ["reliable", "rɪˈlaɪəbl", "надёжный", "He is a reliable friend."],
+    ["selfish", "ˈselfɪʃ", "эгоистичный", "That was a selfish act."],
+    ["curious", "ˈkjʊəriəs", "любопытный", "Cats are curious animals."]
+  ]},
+  { theme: "Деньги и покупки", items: [
+    ["money", "ˈmʌni", "деньги", "I don't have enough money."],
+    ["price", "praɪs", "цена", "The price is too high."],
+    ["cheap", "tʃiːp", "дешёвый", "This hotel is cheap but clean."],
+    ["expensive", "ɪkˈspensɪv", "дорогой", "That watch is expensive."],
+    ["pay", "peɪ", "платить", "Can I pay by card?"],
+    ["cost", "kɒst", "стоить", "How much does it cost?"],
+    ["discount", "ˈdɪskaʊnt", "скидка", "Is there a student discount?"],
+    ["receipt", "rɪˈsiːt", "чек", "Keep your receipt."],
+    ["borrow", "ˈbɒrəʊ", "занимать (брать)", "Can I borrow your pen?"],
+    ["save", "seɪv", "копить, экономить", "I'm saving for a car."]
+  ]},
+  { theme: "Учёба", items: [
+    ["study", "ˈstʌdi", "учиться", "I study every evening."],
+    ["knowledge", "ˈnɒlɪdʒ", "знание", "Knowledge is power."],
+    ["mistake", "mɪˈsteɪk", "ошибка", "Everyone makes mistakes."],
+    ["practice", "ˈpræktɪs", "практика", "Practice makes perfect."],
+    ["exam", "ɪɡˈzæm", "экзамен", "The exam was difficult."],
+    ["result", "rɪˈzʌlt", "результат", "The results come out tomorrow."],
+    ["skill", "skɪl", "навык", "Writing is a useful skill."],
+    ["subject", "ˈsʌbdʒɪkt", "предмет", "Maths is my favourite subject."],
+    ["teacher", "ˈtiːtʃə", "учитель", "Our teacher is strict."],
+    ["learn", "lɜːn", "учить, узнавать", "I'm learning English."]
+  ]},
+  { theme: "Технологии", items: [
+    ["computer", "kəmˈpjuːtə", "компьютер", "My computer is slow."],
+    ["screen", "skriːn", "экран", "The screen is cracked."],
+    ["keyboard", "ˈkiːbɔːd", "клавиатура", "This keyboard is quiet."],
+    ["software", "ˈsɒftweə", "программное обеспечение", "Update the software."],
+    ["password", "ˈpɑːswɜːd", "пароль", "I forgot my password."],
+    ["download", "ˌdaʊnˈləʊd", "скачивать", "Download the app first."],
+    ["message", "ˈmesɪdʒ", "сообщение", "I sent you a message."],
+    ["device", "dɪˈvaɪs", "устройство", "This device needs charging."],
+    ["online", "ˌɒnˈlaɪn", "онлайн", "I bought it online."],
+    ["charge", "tʃɑːdʒ", "заряжать", "Charge your phone."]
+  ]},
+  { theme: "Общение и медиа", items: [
+    ["news", "njuːz", "новости", "Have you heard the news?"],
+    ["story", "ˈstɔːri", "история", "She told an amazing story."],
+    ["question", "ˈkwestʃən", "вопрос", "Can I ask a question?"],
+    ["answer", "ˈɑːnsə", "ответ", "I don't know the answer."],
+    ["advice", "ədˈvaɪs", "совет", "Thanks for the advice."],
+    ["opinion", "əˈpɪnjən", "мнение", "In my opinion, you're right."],
+    ["discuss", "dɪˈskʌs", "обсуждать", "Let's discuss it later."],
+    ["explain", "ɪkˈspleɪn", "объяснять", "Explain it again, please."],
+    ["interview", "ˈɪntəvjuː", "интервью", "The interview went well."],
+    ["article", "ˈɑːtɪkl", "статья", "I read an interesting article."]
+  ]},
+  { theme: "Спорт и досуг", items: [
+    ["sport", "spɔːt", "спорт", "Sport keeps me fit."],
+    ["game", "ɡeɪm", "игра", "Let's play a game."],
+    ["team", "tiːm", "команда", "Our team won."],
+    ["match", "mætʃ", "матч", "The match starts at eight."],
+    ["win", "wɪn", "побеждать", "We want to win."],
+    ["lose", "luːz", "проигрывать, терять", "Don't lose your ticket."],
+    ["training", "ˈtreɪnɪŋ", "тренировка", "Training is every Tuesday."],
+    ["hobby", "ˈhɒbi", "хобби", "Photography is my hobby."],
+    ["exercise", "ˈeksəsaɪz", "упражнение", "Do some exercise daily."],
+    ["rest", "rest", "отдых", "You need to rest."]
+  ]},
+  { theme: "Одежда и внешность", items: [
+    ["clothes", "kləʊðz", "одежда", "Pack some warm clothes."],
+    ["shirt", "ʃɜːt", "рубашка", "This shirt fits well."],
+    ["shoes", "ʃuːz", "обувь", "These shoes are too tight."],
+    ["coat", "kəʊt", "пальто", "Wear a coat, it's cold."],
+    ["dress", "dres", "платье", "She wore a red dress."],
+    ["pocket", "ˈpɒkɪt", "карман", "My keys are in my pocket."],
+    ["wear", "weə", "носить", "What are you wearing?"],
+    ["size", "saɪz", "размер", "Do you have a bigger size?"],
+    ["beautiful", "ˈbjuːtɪfl", "красивый", "What a beautiful view!"],
+    ["style", "staɪl", "стиль", "I like your style."]
+  ]},
+  { theme: "Животные", items: [
+    ["animal", "ˈænɪml", "животное", "Wild animals need protection."],
+    ["dog", "dɒɡ", "собака", "The dog is barking."],
+    ["cat", "kæt", "кошка", "The cat is sleeping."],
+    ["bird", "bɜːd", "птица", "A bird is singing outside."],
+    ["horse", "hɔːs", "лошадь", "She rides a horse."],
+    ["fish", "fɪʃ", "рыба", "We had fish for dinner."],
+    ["insect", "ˈɪnsekt", "насекомое", "An insect bit my arm."],
+    ["wild", "waɪld", "дикий", "Wild flowers grow here."],
+    ["zoo", "zuː", "зоопарк", "We took the kids to the zoo."],
+    ["pet", "pet", "питомец", "Do you have any pets?"]
+  ]},
+  { theme: "Искусство и музыка", items: [
+    ["music", "ˈmjuːzɪk", "музыка", "Music helps me relax."],
+    ["song", "sɒŋ", "песня", "This song is stuck in my head."],
+    ["artist", "ˈɑːtɪst", "художник", "The artist is famous."],
+    ["painting", "ˈpeɪntɪŋ", "картина", "The painting hangs in the hall."],
+    ["concert", "ˈkɒnsət", "концерт", "The concert was sold out."],
+    ["film", "fɪlm", "фильм", "We watched a great film."],
+    ["book", "bʊk", "книга", "I'm reading a good book."],
+    ["design", "dɪˈzaɪn", "дизайн", "I love the design of this site."],
+    ["perform", "pəˈfɔːm", "выступать", "They perform every weekend."],
+    ["creative", "kriˈeɪtɪv", "творческий", "She has a creative mind."]
+  ]},
+  { theme: "Общество и право", items: [
+    ["law", "lɔː", "закон", "Everyone must obey the law."],
+    ["right", "raɪt", "право", "You have the right to remain silent."],
+    ["rule", "ruːl", "правило", "Follow the rules."],
+    ["government", "ˈɡʌvənmənt", "правительство", "The government announced new measures."],
+    ["society", "səˈsaɪəti", "общество", "Society is changing fast."],
+    ["freedom", "ˈfriːdəm", "свобода", "Freedom of speech matters."],
+    ["court", "kɔːt", "суд", "The case goes to court."],
+    ["crime", "kraɪm", "преступление", "Crime rates are falling."],
+    ["citizen", "ˈsɪtɪzn", "гражданин", "Every citizen can vote."],
+    ["justice", "ˈdʒʌstɪs", "справедливость", "They demand justice."]
+  ]},
+  { theme: "Наука", items: [
+    ["science", "ˈsaɪəns", "наука", "Science explains the world."],
+    ["research", "rɪˈsɜːtʃ", "исследование", "The research took two years."],
+    ["experiment", "ɪkˈsperɪmənt", "эксперимент", "The experiment failed."],
+    ["theory", "ˈθɪəri", "теория", "That's just a theory."],
+    ["evidence", "ˈevɪdəns", "доказательство", "There is no evidence."],
+    ["data", "ˈdeɪtə", "данные", "We analysed the data."],
+    ["discover", "dɪˈskʌvə", "открывать", "They discovered a new planet."],
+    ["measure", "ˈmeʒə", "измерять", "Measure the room first."],
+    ["energy", "ˈenədʒi", "энергия", "Solar energy is cheap."],
+    ["develop", "dɪˈveləp", "разрабатывать", "We develop new products."]
+  ]},
+  { theme: "Бизнес и карьера", items: [
+    ["company", "ˈkʌmpəni", "компания", "She works for a big company."],
+    ["market", "ˈmɑːkɪt", "рынок", "The market is growing."],
+    ["client", "ˈklaɪənt", "клиент", "Our client is happy."],
+    ["profit", "ˈprɒfɪt", "прибыль", "Profit doubled this year."],
+    ["invest", "ɪnˈvest", "инвестировать", "They invest in startups."],
+    ["manager", "ˈmænɪdʒə", "менеджер", "Ask your manager."],
+    ["contract", "ˈkɒntrækt", "договор", "Sign the contract here."],
+    ["career", "kəˈrɪə", "карьера", "It's a good career move."],
+    ["success", "səkˈses", "успех", "The launch was a success."],
+    ["growth", "ɡrəʊθ", "рост", "We expect steady growth."]
+  ]},
+  { theme: "Мышление", items: [
+    ["think", "θɪŋk", "думать", "Let me think about it."],
+    ["believe", "bɪˈliːv", "верить", "I believe you."],
+    ["understand", "ˌʌndəˈstænd", "понимать", "I don't understand."],
+    ["decide", "dɪˈsaɪd", "решать", "We need to decide now."],
+    ["imagine", "ɪˈmædʒɪn", "представлять", "Imagine a quiet beach."],
+    ["remember", "rɪˈmembə", "помнить", "I remember that day."],
+    ["forget", "fəˈɡet", "забывать", "Don't forget your keys."],
+    ["agree", "əˈɡriː", "соглашаться", "I agree with you."],
+    ["doubt", "daʊt", "сомневаться", "I doubt it will work."],
+    ["suggest", "səˈdʒest", "предлагать", "I suggest we wait."]
+  ]},
+  { theme: "Движение", items: [
+    ["walk", "wɔːk", "ходить", "Let's walk to the park."],
+    ["run", "rʌn", "бегать", "She runs every morning."],
+    ["jump", "dʒʌmp", "прыгать", "The cat jumped on the table."],
+    ["climb", "klaɪm", "взбираться", "We climbed the stairs."],
+    ["carry", "ˈkæri", "нести", "Can you carry this bag?"],
+    ["push", "pʊʃ", "толкать", "Push the door, don't pull."],
+    ["pull", "pʊl", "тянуть", "Pull the handle."],
+    ["throw", "θrəʊ", "бросать", "Throw me the ball."],
+    ["catch", "kætʃ", "ловить", "Catch the ball!"],
+    ["hold", "həʊld", "держать", "Hold my hand."]
+  ]},
+  { theme: "Полезные глаголы", items: [
+    ["achieve", "əˈtʃiːv", "достигать", "She achieved her goal."],
+    ["avoid", "əˈvɔɪd", "избегать", "Avoid sugary drinks."],
+    ["allow", "əˈlaʊ", "разрешать", "Smoking is not allowed."],
+    ["refuse", "rɪˈfjuːz", "отказываться", "He refused to help."],
+    ["promise", "ˈprɒmɪs", "обещать", "I promise to call."],
+    ["offer", "ˈɒfə", "предлагать", "They offered me a job."],
+    ["accept", "əkˈsept", "принимать", "She accepted the offer."],
+    ["improve", "ɪmˈpruːv", "улучшать", "My English is improving."],
+    ["prepare", "prɪˈpeə", "готовить", "Prepare for the worst."],
+    ["manage", "ˈmænɪdʒ", "успевать, управлять", "I managed to finish."]
+  ]},
+  { theme: "Качества и размер", items: [
+    ["good", "ɡʊd", "хороший", "That's a good idea."],
+    ["bad", "bæd", "плохой", "The weather is bad."],
+    ["big", "bɪɡ", "большой", "They live in a big house."],
+    ["small", "smɔːl", "маленький", "It's a small world."],
+    ["easy", "ˈiːzi", "лёгкий", "The test was easy."],
+    ["difficult", "ˈdɪfɪkəlt", "сложный", "This question is difficult."],
+    ["important", "ɪmˈpɔːtnt", "важный", "It's an important day."],
+    ["useful", "ˈjuːsfl", "полезный", "This app is useful."],
+    ["strong", "strɒŋ", "сильный", "He is strong enough."],
+    ["weak", "wiːk", "слабый", "My signal is weak."]
+  ]},
+  { theme: "Время и частота", items: [
+    ["always", "ˈɔːlweɪz", "всегда", "She is always late."],
+    ["often", "ˈɒfn", "часто", "We often meet here."],
+    ["sometimes", "ˈsʌmtaɪmz", "иногда", "Sometimes I work late."],
+    ["never", "ˈnevə", "никогда", "I never drink coffee."],
+    ["usually", "ˈjuːʒuəli", "обычно", "I usually walk to work."],
+    ["rarely", "ˈreəli", "редко", "He rarely calls."],
+    ["soon", "suːn", "скоро", "See you soon."],
+    ["later", "ˈleɪtə", "позже", "I'll do it later."],
+    ["already", "ɔːlˈredi", "уже", "I've already eaten."],
+    ["still", "stɪl", "всё ещё", "She is still sleeping."]
+  ]},
+  { theme: "Связки и наречия", items: [
+    ["however", "haʊˈevə", "однако", "It's cheap; however, it's slow."],
+    ["therefore", "ˈðeəfɔː", "поэтому", "It rained; therefore we stayed in."],
+    ["although", "ɔːlˈðəʊ", "хотя", "Although tired, she kept going."],
+    ["besides", "bɪˈsaɪdz", "кроме того", "Besides, we have no time."],
+    ["instead", "ɪnˈsted", "вместо", "Let's walk instead."],
+    ["probably", "ˈprɒbəbli", "вероятно", "He's probably at home."],
+    ["actually", "ˈæktʃuəli", "на самом деле", "Actually, I disagree."],
+    ["especially", "ɪˈspeʃəli", "особенно", "I love fruit, especially mangoes."],
+    ["finally", "ˈfaɪnəli", "наконец", "Finally, the rain stopped."],
+    ["suddenly", "ˈsʌdənli", "вдруг", "Suddenly, the lights went out."]
+  ]},
+  { theme: "Продвинутые слова", items: [
+    ["significant", "sɪɡˈnɪfɪkənt", "значительный", "This is a significant change."],
+    ["approach", "əˈprəʊtʃ", "подход", "We need a new approach."],
+    ["consequence", "ˈkɒnsɪkwəns", "последствие", "Every choice has consequences."],
+    ["opportunity", "ˌɒpəˈtjuːnəti", "возможность", "Don't miss this opportunity."],
+    ["environment", "ɪnˈvaɪrənmənt", "окружающая среда", "We must protect the environment."],
+    ["require", "rɪˈkwaɪə", "требовать", "The job requires experience."],
+    ["provide", "prəˈvaɪd", "предоставлять", "We provide free training."],
+    ["consider", "kənˈsɪdə", "рассматривать", "Please consider my offer."],
+    ["influence", "ˈɪnfluəns", "влияние", "Social media has influence."],
+    ["responsible", "rɪˈspɒnsəbl", "ответственный", "You are responsible for this."]
+  ]},
+];
+
+/* ====== ДОПОЛНИТЕЛЬНЫЙ КУРС: 700 слов ====== */
+const EXTRA_GROUPS = [
+  { theme: "Семья и этапы жизни", items: [
+    ["parent", "родитель"],
+    ["mother", "мать"],
+    ["father", "отец"],
+    ["son", "сын"],
+    ["daughter", "дочь"],
+    ["brother", "брат"],
+    ["sister", "сестра"],
+    ["grandmother", "бабушка"],
+    ["grandfather", "дедушка"],
+    ["cousin", "двоюродный брат или сестра"],
+    ["uncle", "дядя"],
+    ["aunt", "тётя"],
+    ["nephew", "племянник"],
+    ["niece", "племянница"],
+    ["husband", "муж"],
+    ["wife", "жена"],
+    ["baby", "младенец"],
+    ["teenager", "подросток"],
+    ["marriage", "брак"],
+    ["divorce", "развод"]
+  ] },
+  { theme: "Внешность", items: [
+    ["appearance", "внешность"],
+    ["face", "лицо"],
+    ["eye", "глаз"],
+    ["ear", "ухо"],
+    ["nose", "нос"],
+    ["mouth", "рот"],
+    ["hair", "волосы"],
+    ["tooth", "зуб"],
+    ["skin", "кожа"],
+    ["neck", "шея"],
+    ["shoulder", "плечо"],
+    ["arm", "рука"],
+    ["finger", "палец"],
+    ["leg", "нога"],
+    ["knee", "колено"],
+    ["foot", "ступня"],
+    ["tall", "высокий"],
+    ["short", "низкий"],
+    ["slim", "стройный"],
+    ["handsome", "красивый"]
+  ] },
+  { theme: "Характер", items: [
+    ["generous", "щедрый"],
+    ["friendly", "дружелюбный"],
+    ["confident", "уверенный"],
+    ["calm", "спокойный"],
+    ["serious", "серьёзный"],
+    ["funny", "смешной"],
+    ["clever", "умный"],
+    ["modest", "скромный"],
+    ["stubborn", "упрямый"],
+    ["jealous", "ревнивый"],
+    ["rude", "грубый"],
+    ["gentle", "нежный"],
+    ["loyal", "верный"],
+    ["witty", "остроумный"],
+    ["optimistic", "оптимистичный"],
+    ["pessimistic", "пессимистичный"],
+    ["ambitious", "амбициозный"],
+    ["cautious", "осторожный"],
+    ["sensitive", "чувствительный"],
+    ["sociable", "общительный"]
+  ] },
+  { theme: "Дом и жильё", items: [
+    ["wall", "стена"],
+    ["ceiling", "потолок"],
+    ["roof", "крыша"],
+    ["stairs", "лестница"],
+    ["basement", "подвал"],
+    ["balcony", "балкон"],
+    ["garden", "сад"],
+    ["garage", "гараж"],
+    ["apartment", "квартира"],
+    ["rent", "арендная плата"],
+    ["landlord", "арендодатель"],
+    ["tenant", "арендатор"],
+    ["flatmate", "сосед по квартире"],
+    ["shelf", "полка"],
+    ["mirror", "зеркало"],
+    ["carpet", "ковёр"],
+    ["curtain", "штора"],
+    ["pillow", "подушка"],
+    ["blanket", "одеяло"],
+    ["cupboard", "шкаф"]
+  ] },
+  { theme: "Кухня и посуда", items: [
+    ["fridge", "холодильник"],
+    ["oven", "духовка"],
+    ["stove", "плита"],
+    ["sink", "раковина"],
+    ["pot", "кастрюля"],
+    ["pan", "сковорода"],
+    ["plate", "тарелка"],
+    ["cup", "чашка"],
+    ["glass", "стакан"],
+    ["spoon", "ложка"],
+    ["fork", "вилка"],
+    ["knife", "нож"],
+    ["bottle", "бутылка"],
+    ["kettle", "чайник"],
+    ["microwave", "микроволновая печь"],
+    ["dishwasher", "посудомоечная машина"],
+    ["recipe", "рецепт"],
+    ["boil", "кипятить"],
+    ["fry", "жарить"],
+    ["bake", "печь"]
+  ] },
+  { theme: "Еда и продукты", items: [
+    ["meat", "мясо"],
+    ["chicken", "курица"],
+    ["beef", "говядина"],
+    ["pork", "свинина"],
+    ["seafood", "морепродукты"],
+    ["egg", "яйцо"],
+    ["milk", "молоко"],
+    ["butter", "масло"],
+    ["oil", "растительное масло"],
+    ["rice", "рис"],
+    ["pasta", "макароны"],
+    ["soup", "суп"],
+    ["salad", "салат"],
+    ["sauce", "соус"],
+    ["pepper", "перец"],
+    ["honey", "мёд"],
+    ["nut", "орех"],
+    ["dessert", "десерт"],
+    ["lunch", "обед"],
+    ["dinner", "ужин"]
+  ] },
+  { theme: "Одежда и покупки", items: [
+    ["trousers", "брюки"],
+    ["skirt", "юбка"],
+    ["jacket", "куртка"],
+    ["sweater", "свитер"],
+    ["sock", "носок"],
+    ["glove", "перчатка"],
+    ["hat", "шляпа"],
+    ["scarf", "шарф"],
+    ["belt", "ремень"],
+    ["button", "пуговица"],
+    ["zipper", "молния"],
+    ["try on", "примерять"],
+    ["fitting room", "примерочная"],
+    ["cashier", "кассир"],
+    ["change", "сдача"],
+    ["wallet", "кошелёк"],
+    ["customer", "покупатель"],
+    ["bargain", "выгодная покупка"],
+    ["order", "заказ"],
+    ["deliver", "доставлять"]
+  ] },
+  { theme: "Город и инфраструктура", items: [
+    ["town hall", "мэрия"],
+    ["post office", "почта"],
+    ["police station", "полицейский участок"],
+    ["fire station", "пожарная станция"],
+    ["bank", "банк"],
+    ["café", "кафе"],
+    ["restaurant", "ресторан"],
+    ["supermarket", "супермаркет"],
+    ["pharmacy", "аптека"],
+    ["school", "школа"],
+    ["university", "университет"],
+    ["park", "парк"],
+    ["playground", "детская площадка"],
+    ["pavement", "тротуар"],
+    ["crossing", "переход"],
+    ["traffic light", "светофор"],
+    ["sign", "знак"],
+    ["building", "здание"],
+    ["district", "район"],
+    ["suburb", "пригород"]
+  ] },
+  { theme: "Транспорт", items: [
+    ["bus", "автобус"],
+    ["car", "автомобиль"],
+    ["taxi", "такси"],
+    ["bike", "велосипед"],
+    ["motorbike", "мотоцикл"],
+    ["ship", "корабль"],
+    ["boat", "лодка"],
+    ["plane", "самолёт"],
+    ["subway", "метро"],
+    ["tram", "трамвай"],
+    ["driver", "водитель"],
+    ["passenger", "пассажир"],
+    ["traffic", "движение"],
+    ["road", "дорога"],
+    ["route", "маршрут"],
+    ["platform", "платформа"],
+    ["timetable", "расписание"],
+    ["fare", "стоимость проезда"],
+    ["board", "садиться на транспорт"],
+    ["delay", "задержка"]
+  ] },
+  { theme: "Природа и экология", items: [
+    ["lake", "озеро"],
+    ["sea", "море"],
+    ["ocean", "океан"],
+    ["beach", "пляж"],
+    ["coast", "побережье"],
+    ["desert", "пустыня"],
+    ["field", "поле"],
+    ["valley", "долина"],
+    ["hill", "холм"],
+    ["cave", "пещера"],
+    ["waterfall", "водопад"],
+    ["sky", "небо"],
+    ["moon", "луна"],
+    ["star", "звезда"],
+    ["earth", "Земля"],
+    ["nature", "природа"],
+    ["pollution", "загрязнение"],
+    ["recycle", "перерабатывать"],
+    ["waste", "отходы"],
+    ["climate", "климат"]
+  ] },
+  { theme: "Погода и времена года", items: [
+    ["season", "время года"],
+    ["spring", "весна"],
+    ["summer", "лето"],
+    ["autumn", "осень"],
+    ["winter", "зима"],
+    ["temperature", "температура"],
+    ["degree", "градус"],
+    ["fog", "туман"],
+    ["storm", "буря"],
+    ["thunder", "гром"],
+    ["lightning", "молния"],
+    ["ice", "лёд"],
+    ["frost", "мороз"],
+    ["heat", "жара"],
+    ["humid", "влажный"],
+    ["dry", "сухой"],
+    ["forecast", "прогноз"],
+    ["umbrella", "зонт"],
+    ["freeze", "замерзать"],
+    ["melt", "таять"]
+  ] },
+  { theme: "Животные и растения", items: [
+    ["cow", "корова"],
+    ["pig", "свинья"],
+    ["sheep", "овца"],
+    ["goat", "коза"],
+    ["rabbit", "кролик"],
+    ["mouse", "мышь"],
+    ["elephant", "слон"],
+    ["lion", "лев"],
+    ["tiger", "тигр"],
+    ["bear", "медведь"],
+    ["monkey", "обезьяна"],
+    ["snake", "змея"],
+    ["frog", "лягушка"],
+    ["butterfly", "бабочка"],
+    ["tree", "дерево"],
+    ["flower", "цветок"],
+    ["grass", "трава"],
+    ["leaf", "лист"],
+    ["root", "корень"],
+    ["seed", "семя"]
+  ] },
+  { theme: "Здоровье и медицина", items: [
+    ["nurse", "медсестра"],
+    ["clinic", "клиника"],
+    ["illness", "болезнь"],
+    ["disease", "заболевание"],
+    ["fever", "жар"],
+    ["cough", "кашель"],
+    ["flu", "грипп"],
+    ["headache", "головная боль"],
+    ["injury", "травма"],
+    ["wound", "рана"],
+    ["treatment", "лечение"],
+    ["cure", "средство от болезни"],
+    ["pill", "таблетка"],
+    ["injection", "укол"],
+    ["surgery", "операция"],
+    ["recover", "выздоравливать"],
+    ["breathe", "дышать"],
+    ["diet", "диета"],
+    ["hygiene", "гигиена"],
+    ["ambulance", "скорая помощь"]
+  ] },
+  { theme: "Спорт", items: [
+    ["player", "игрок"],
+    ["coach", "тренер"],
+    ["referee", "судья"],
+    ["score", "счёт"],
+    ["goal", "гол"],
+    ["championship", "чемпионат"],
+    ["competition", "соревнование"],
+    ["medal", "медаль"],
+    ["prize", "приз"],
+    ["stadium", "стадион"],
+    ["gym", "спортзал"],
+    ["swimming", "плавание"],
+    ["cycling", "велоспорт"],
+    ["skiing", "лыжный спорт"],
+    ["opponent", "соперник"],
+    ["race", "гонка"],
+    ["record", "рекорд"],
+    ["fitness", "фитнес"],
+    ["stretch", "растягиваться"],
+    ["endurance", "выносливость"]
+  ] },
+  { theme: "Работа и карьера", items: [
+    ["employee", "сотрудник"],
+    ["employer", "работодатель"],
+    ["staff", "персонал"],
+    ["application", "заявка"],
+    ["resume", "резюме"],
+    ["position", "должность"],
+    ["promotion", "повышение"],
+    ["resign", "увольняться"],
+    ["retire", "выходить на пенсию"],
+    ["overtime", "сверхурочная работа"],
+    ["shift", "смена"],
+    ["workplace", "рабочее место"],
+    ["department", "отдел"],
+    ["experience", "опыт"],
+    ["qualification", "квалификация"],
+    ["duty", "обязанность"],
+    ["collaboration", "сотрудничество"],
+    ["objective", "цель"],
+    ["accomplish", "выполнять"],
+    ["failure", "неудача"]
+  ] },
+  { theme: "Офис и документы", items: [
+    ["document", "документ"],
+    ["file", "файл"],
+    ["folder", "папка"],
+    ["printer", "принтер"],
+    ["copy", "копия"],
+    ["signature", "подпись"],
+    ["form", "бланк"],
+    ["deal", "договорённость"],
+    ["note", "заметка"],
+    ["list", "список"],
+    ["plan", "план"],
+    ["budget", "бюджет"],
+    ["invoice", "счёт-фактура"],
+    ["envelope", "конверт"],
+    ["stamp", "марка"],
+    ["mail", "почта"],
+    ["scan", "сканировать"],
+    ["archive", "архив"],
+    ["agenda", "повестка"],
+    ["draft", "черновик"]
+  ] },
+  { theme: "Бизнес и финансы", items: [
+    ["business", "бизнес"],
+    ["trade", "торговля"],
+    ["sell", "продавать"],
+    ["buy", "покупать"],
+    ["retail", "розница"],
+    ["product", "продукт"],
+    ["service", "услуга"],
+    ["brand", "бренд"],
+    ["advertising", "реклама"],
+    ["demand", "спрос"],
+    ["supply", "предложение"],
+    ["income", "доход"],
+    ["expense", "расход"],
+    ["tax", "налог"],
+    ["loan", "кредит"],
+    ["debt", "долг"],
+    ["account", "счёт в банке"],
+    ["currency", "валюта"],
+    ["economy", "экономика"],
+    ["industry", "промышленность"]
+  ] },
+  { theme: "Технологии", items: [
+    ["hardware", "аппаратное обеспечение"],
+    ["program", "программа"],
+    ["app", "приложение"],
+    ["network", "сеть"],
+    ["server", "сервер"],
+    ["database", "база данных"],
+    ["sensor", "датчик"],
+    ["robot", "робот"],
+    ["battery", "батарея"],
+    ["cable", "кабель"],
+    ["wireless", "беспроводной"],
+    ["update", "обновление"],
+    ["install", "устанавливать"],
+    ["connect", "подключать"],
+    ["backup", "резервная копия"],
+    ["error", "ошибка"],
+    ["bug", "баг"],
+    ["user", "пользователь"],
+    ["digital", "цифровой"],
+    ["gadget", "гаджет"]
+  ] },
+  { theme: "Интернет и соцсети", items: [
+    ["internet", "интернет"],
+    ["website", "сайт"],
+    ["browser", "браузер"],
+    ["search", "поиск"],
+    ["link", "ссылка"],
+    ["click", "клик"],
+    ["upload", "загружать"],
+    ["stream", "поток"],
+    ["subscribe", "подписываться"],
+    ["follower", "подписчик"],
+    ["post", "публикация"],
+    ["comment", "комментарий"],
+    ["like", "лайк"],
+    ["repost", "репост"],
+    ["profile", "профиль"],
+    ["username", "имя пользователя"],
+    ["privacy", "конфиденциальность"],
+    ["content", "контент"],
+    ["viral", "вирусный"],
+    ["notification", "уведомление"]
+  ] },
+  { theme: "Образование", items: [
+    ["student", "студент"],
+    ["pupil", "ученик"],
+    ["lesson", "урок"],
+    ["class", "класс"],
+    ["homework", "домашнее задание"],
+    ["test", "тест"],
+    ["mark", "оценка"],
+    ["grade", "класс"],
+    ["course", "курс"],
+    ["lecture", "лекция"],
+    ["seminar", "семинар"],
+    ["textbook", "учебник"],
+    ["dictionary", "словарь"],
+    ["diploma", "диплом"],
+    ["graduate", "выпускник"],
+    ["scholarship", "стипендия"],
+    ["education", "образование"],
+    ["assignment", "задание"],
+    ["revise", "повторять"],
+    ["memorize", "запоминать"]
+  ] },
+  { theme: "Наука", items: [
+    ["microscope", "микроскоп"],
+    ["laboratory", "лаборатория"],
+    ["method", "метод"],
+    ["conclusion", "вывод"],
+    ["hypothesis", "гипотеза"],
+    ["analysis", "анализ"],
+    ["sample", "образец"],
+    ["observe", "наблюдать"],
+    ["calculate", "вычислять"],
+    ["formula", "формула"],
+    ["chemical", "химикат"],
+    ["physics", "физика"],
+    ["biology", "биология"],
+    ["gravity", "гравитация"],
+    ["atom", "атом"],
+    ["molecule", "молекула"],
+    ["invention", "изобретение"],
+    ["technology", "технология"],
+    ["progress", "прогресс"],
+    ["accurate", "точный"]
+  ] },
+  { theme: "Эмоции и чувства", items: [
+    ["joy", "радость"],
+    ["anxiety", "тревога"],
+    ["rage", "ярость"],
+    ["sorrow", "печаль"],
+    ["love", "любовь"],
+    ["hate", "ненависть"],
+    ["hope", "надежда"],
+    ["worry", "беспокойство"],
+    ["stress", "стресс"],
+    ["relief", "облегчение"],
+    ["shame", "стыд"],
+    ["guilt", "вина"],
+    ["envy", "зависть"],
+    ["disappointment", "разочарование"],
+    ["enthusiasm", "энтузиазм"],
+    ["emotion", "эмоция"],
+    ["feeling", "чувство"],
+    ["mood", "настроение"],
+    ["laugh", "смеяться"],
+    ["cry", "плакать"]
+  ] },
+  { theme: "Общение", items: [
+    ["conversation", "разговор"],
+    ["dialogue", "диалог"],
+    ["argument", "спор"],
+    ["consent", "согласие"],
+    ["request", "просьба"],
+    ["reply", "ответ"],
+    ["greet", "приветствовать"],
+    ["introduce", "представлять"],
+    ["mention", "упоминать"],
+    ["complain", "жаловаться"],
+    ["apologize", "извиняться"],
+    ["thank", "благодарить"],
+    ["invite", "приглашать"],
+    ["persuade", "убеждать"],
+    ["inform", "информировать"],
+    ["announce", "объявлять"],
+    ["whisper", "шептать"],
+    ["shout", "кричать"],
+    ["translate", "переводить"],
+    ["pronounce", "произносить"]
+  ] },
+  { theme: "Мышление и логика", items: [
+    ["reason", "причина"],
+    ["logic", "логика"],
+    ["idea", "идея"],
+    ["concept", "понятие"],
+    ["mind", "разум"],
+    ["intuition", "интуиция"],
+    ["wisdom", "мудрость"],
+    ["assumption", "предположение"],
+    ["judgment", "суждение"],
+    ["proof", "доказательство"],
+    ["compare", "сравнивать"],
+    ["contrast", "противопоставлять"],
+    ["interpret", "интерпретировать"],
+    ["infer", "делать вывод"],
+    ["predict", "предсказывать"],
+    ["evaluate", "оценивать"],
+    ["focus", "сосредоточиваться"],
+    ["realize", "осознавать"],
+    ["confuse", "путать"],
+    ["clarify", "прояснять"]
+  ] },
+  { theme: "Время и планирование", items: [
+    ["second", "секунда"],
+    ["decade", "десятилетие"],
+    ["period", "период"],
+    ["moment", "момент"],
+    ["date", "дата"],
+    ["calendar", "календарь"],
+    ["clock", "часы"],
+    ["watch", "наручные часы"],
+    ["appointment", "встреча"],
+    ["punctual", "пунктуальный"],
+    ["arrange", "организовывать"],
+    ["postpone", "откладывать"],
+    ["cancel", "отменять"],
+    ["continue", "продолжать"],
+    ["finish", "заканчивать"],
+    ["begin", "начинать"],
+    ["duration", "продолжительность"],
+    ["temporary", "временный"],
+    ["permanent", "постоянный"],
+    ["annual", "ежегодный"]
+  ] },
+  { theme: "Путешествия и туризм", items: [
+    ["tourist", "турист"],
+    ["guide", "гид"],
+    ["excursion", "экскурсия"],
+    ["hotel", "отель"],
+    ["reservation", "бронирование"],
+    ["check in", "регистрироваться"],
+    ["check out", "выезжать из отеля"],
+    ["destination", "место назначения"],
+    ["sightseeing", "осмотр достопримечательностей"],
+    ["souvenir", "сувенир"],
+    ["map", "карта"],
+    ["visa", "виза"],
+    ["border", "граница"],
+    ["customs", "таможня"],
+    ["cruise", "круиз"],
+    ["resort", "курорт"],
+    ["abroad", "за границей"],
+    ["explore", "исследовать"],
+    ["adventure", "приключение"],
+    ["backpack", "рюкзак"]
+  ] },
+  { theme: "В ресторане", items: [
+    ["menu", "меню"],
+    ["waiter", "официант"],
+    ["dish", "блюдо"],
+    ["bill", "счёт"],
+    ["tip", "чаевые"],
+    ["table", "столик"],
+    ["starter", "закуска"],
+    ["main course", "основное блюдо"],
+    ["beverage", "напиток"],
+    ["coffee", "кофе"],
+    ["tea", "чай"],
+    ["juice", "сок"],
+    ["water", "вода"],
+    ["spicy", "острый"],
+    ["sweet", "сладкий"],
+    ["sour", "кислый"],
+    ["bitter", "горький"],
+    ["fresh", "свежий"],
+    ["takeaway", "еда на вынос"],
+    ["vegetarian", "вегетарианец"]
+  ] },
+  { theme: "Право и общество", items: [
+    ["officer", "офицер полиции"],
+    ["attorney", "адвокат"],
+    ["judge", "судья"],
+    ["trial", "судебный процесс"],
+    ["guilty", "виновный"],
+    ["innocent", "невиновный"],
+    ["punishment", "наказание"],
+    ["prison", "тюрьма"],
+    ["fine", "штраф"],
+    ["arrest", "арестовывать"],
+    ["witness", "свидетель"],
+    ["testimony", "показания"],
+    ["legal", "законный"],
+    ["illegal", "незаконный"],
+    ["constitution", "конституция"],
+    ["election", "выборы"],
+    ["vote", "голосовать"],
+    ["democracy", "демократия"],
+    ["human rights", "права человека"],
+    ["equality", "равенство"]
+  ] },
+  { theme: "Политика и новости", items: [
+    ["politics", "политика"],
+    ["senator", "сенатор"],
+    ["president", "президент"],
+    ["minister", "министр"],
+    ["parliament", "парламент"],
+    ["party", "партия"],
+    ["campaign", "кампания"],
+    ["strategy", "стратегия"],
+    ["reform", "реформа"],
+    ["crisis", "кризис"],
+    ["protest", "протест"],
+    ["conflict", "конфликт"],
+    ["war", "война"],
+    ["peace", "мир"],
+    ["treaty", "договор"],
+    ["media", "СМИ"],
+    ["journalist", "журналист"],
+    ["headline", "заголовок"],
+    ["broadcast", "трансляция"],
+    ["propaganda", "пропаганда"]
+  ] },
+  { theme: "Абстрактные понятия", items: [
+    ["purpose", "цель"],
+    ["structure", "структура"],
+    ["independence", "независимость"],
+    ["identity", "идентичность"],
+    ["culture", "культура"],
+    ["tradition", "традиция"],
+    ["religion", "религия"],
+    ["value", "ценность"],
+    ["moral", "моральный"],
+    ["ethics", "этика"],
+    ["truth", "правда"],
+    ["lie", "ложь"],
+    ["reality", "реальность"],
+    ["illusion", "иллюзия"],
+    ["meaning", "значение"],
+    ["existence", "существование"],
+    ["balance", "баланс"],
+    ["harmony", "гармония"],
+    ["chaos", "хаос"],
+    ["sequence", "последовательность"]
+  ] },
+  { theme: "Полезные прилагательные", items: [
+    ["huge", "огромный"],
+    ["tiny", "крошечный"],
+    ["wide", "широкий"],
+    ["narrow", "узкий"],
+    ["deep", "глубокий"],
+    ["shallow", "мелкий"],
+    ["heavy", "тяжёлый"],
+    ["light", "лёгкий"],
+    ["fast", "быстрый"],
+    ["slow", "медленный"],
+    ["hot", "горячий"],
+    ["cold", "холодный"],
+    ["warm", "тёплый"],
+    ["cool", "прохладный"],
+    ["clean", "чистый"],
+    ["dirty", "грязный"],
+    ["full", "полный"],
+    ["empty", "пустой"],
+    ["safe", "безопасный"],
+    ["dangerous", "опасный"]
+  ] },
+  { theme: "Полезные наречия", items: [
+    ["almost", "почти"],
+    ["quite", "довольно"],
+    ["rather", "скорее"],
+    ["fairly", "довольно"],
+    ["extremely", "чрезвычайно"],
+    ["completely", "полностью"],
+    ["exactly", "точно"],
+    ["approximately", "приблизительно"],
+    ["hardly", "едва"],
+    ["nearly", "почти"],
+    ["merely", "просто"],
+    ["obviously", "очевидно"],
+    ["apparently", "по-видимому"],
+    ["fortunately", "к счастью"],
+    ["unfortunately", "к сожалению"],
+    ["generally", "вообще"],
+    ["recently", "недавно"],
+    ["immediately", "немедленно"],
+    ["eventually", "в конце концов"],
+    ["meanwhile", "тем временем"]
+  ] },
+  { theme: "Глаголы действия", items: [
+    ["sit", "сидеть"],
+    ["stand", "стоять"],
+    ["bend", "наклоняться"],
+    ["turn", "поворачивать"],
+    ["move", "двигать"],
+    ["lift", "поднимать"],
+    ["drop", "ронять"],
+    ["drag", "тащить"],
+    ["shake", "трясти"],
+    ["hit", "ударять"],
+    ["kick", "пинать"],
+    ["bite", "кусать"],
+    ["touch", "трогать"],
+    ["point", "указывать"],
+    ["wave", "махать"],
+    ["wash", "мыть"],
+    ["wipe", "вытирать"],
+    ["sweep", "подметать"],
+    ["dig", "копать"],
+    ["crawl", "ползти"]
+  ] },
+  { theme: "Фразовые глаголы", items: [
+    ["get up", "вставать"],
+    ["wake up", "просыпаться"],
+    ["put on", "надевать"],
+    ["take off", "снимать"],
+    ["turn on", "включать"],
+    ["turn off", "выключать"],
+    ["look for", "искать"],
+    ["find out", "выяснять"],
+    ["give up", "сдаваться"],
+    ["go on", "продолжать"],
+    ["come back", "возвращаться"],
+    ["come in", "входить"],
+    ["go out", "выходить"],
+    ["grow up", "взрослеть"],
+    ["break down", "ломаться"],
+    ["run out of", "заканчиваться"],
+    ["take care of", "заботиться"],
+    ["look after", "присматривать"],
+    ["look forward to", "с нетерпением ждать"],
+    ["set up", "устанавливать"]
+  ] },
+  { theme: "Продвинутые слова", items: [
+    ["acknowledge", "признавать"],
+    ["acquire", "приобретать"],
+    ["adequate", "достаточный"],
+    ["ambiguous", "двусмысленный"],
+    ["anticipate", "предвидеть"],
+    ["arbitrary", "произвольный"],
+    ["assess", "оценивать"],
+    ["coherent", "связный"],
+    ["comprehensive", "всеобъемлющий"],
+    ["crucial", "решающий"],
+    ["deliberate", "намеренный"],
+    ["diminish", "уменьшать"],
+    ["diverse", "разнообразный"],
+    ["elaborate", "подробный"],
+    ["enhance", "улучшать"],
+    ["essential", "существенный"],
+    ["feasible", "осуществимый"],
+    ["inevitable", "неизбежный"],
+    ["profound", "глубокий"],
+    ["sufficient", "достаточный"]
+  ] },
+];
+/* ====== ОСНОВА ====== */
+const PER_DAY = 10;
+const RAW_COURSE = BASE_COURSE.concat(EXTRA_GROUPS.map(g => ({
+  theme: g.theme,
+  items: g.items.map(it => [it[0], "", it[1], ""])
+})));
+const COURSE = [];
+RAW_COURSE.forEach(g => {
+  const parts = Math.ceil(g.items.length / PER_DAY);
+  for (let i = 0; i < g.items.length; i += PER_DAY) {
+    const part = Math.floor(i / PER_DAY);
+    COURSE.push({
+      theme: parts > 1 ? `${g.theme} · часть ${part + 1}` : g.theme,
+      items: g.items.slice(i, i + PER_DAY)
+    });
+  }
+});
+const TOTAL = COURSE.length * PER_DAY;
+const ALL = [];
+COURSE.forEach((day, di) => day.items.forEach((it, ii) => {
+  ALL.push({ id: di * PER_DAY + ii, day: di, en: it[0], ipa: it[1], ru: it[2], ex: it[3] });
+}));
+const BY_ID = new Map(ALL.map(w => [w.id, w]));
+const PLAYLIST = [["Hp9wUEDasY4",1,0,0],["jMCOyUgKhqU",1,1,0],["nXI9CN5a6ew",2,0,0],["7MnnYT9hWLg",2,1,0],["GCNEqFJM3GA",3,0,0],["zc-4grfULhg",3,1,0],["1nkoP6NosxU",4,0,0],["oDbDuu17p7I",4,1,0],["nPXmJZx60K0",5,0,0],["EJEKg2lkjW4",5,1,0],["oo6HUQd7fnE",5,1,0],["arCOcpSlsNE",5,1,0],["g54X7P-QMQ8",6,0,0],["3rBR7sKA4Eo",6,1,0],["006VR_z3iYc",7,0,0],["b34X_3Nb-cE",7,1,0],["8O2JICbDthQ",8,0,0],["-bdj0TgQCp4",8,1,0],["82Z289SJSYA",9,0,0],["eIn2z55aSXg",9,1,0],["RQL8lICKsiA",10,0,0],["UcVJ7O10Ii8",10,1,0],["IsKSfWnkqiE",11,0,0],["RT7Iy7OZcos",12,0,0],["3k4L-qZs-_0",13,0,0],["MoVZGyxjnbg",11,1,0],["Q6YEVnihBZU",11,1,0],["RIBID1WoIJA",12,1,0],["97U3119r4Yk",12,1,0],["lK5fC6J7Jmk",13,1,0],["-YhoaobFcqQ",13,1,0],["s2mDQEUY9ac",14,0,0],["5Hqg_P_eVJM",14,1,0],["IlSNy49QRm0",15,0,0],["UnhchN3am_c",15,1,0],["2Yr6DvVRe-I",16,0,0],["G0EW2yN7j2g",16,1,0],["_z9rz35ks2A",17,0,0],["TG5x5z5wGlk",17,1,0],["a7FIdktMwS8",18,0,0],["p-M1hskVits",18,1,0],["56PQdieS8ZA",18,1,0],["AcLZcx9p5-E",19,0,0],["Y9BTiMV7hPQ",19,1,0],["AdJDHYwz1_8",19,1,0],["88QDbO4V2t0",20,0,0],["LEdnUTNQloI",20,1,0],["mfsalx6Nojs",21,0,0],["EBBl1Y4iioA",21,1,0],["jMG8S9odePg",21,1,0],["WDYiEj2FA4g",22,0,0],["sCoR5lhOEJU",23,0,0],["SAUuT11ya5U",24,0,0],["_EGF9l9808w",25,0,0],["zbgF335KN8U",22,2,1],["xioVluBC0Ac",22,2,2],["AL-R4Uc7X14",22,2,3],["kEktEl6uj5s",23,2,4],["bQ9l7m7KUYk",23,2,5],["StAi1-HOAoQ",23,2,6],["qQGKsAeF9fI",24,2,7],["mAI4tMAZtXg",24,2,8],["Oahp_V3N8Ls",24,2,9],["gC0GGhMGpA4",25,2,10],["sctMdg9ISp0",25,2,11],["Eg9ajlwjvHI",25,2,12],["CY3wNk3_Rnw",25,2,13],["Evv2O-6K0pM",25,2,14],["bB4K-WblSIk",26,0,0],["Dym4N0hq15Q",26,1,0],["EmmoAPtgllA",27,0,0],["dGBzXBiuW8Y",27,1,0],["gPRaahcizTo",27,1,0],["3pvq0lHmLXM",28,0,0],["CLBV1M0lYR4",28,1,0],["lHGmAktrPd4",29,0,0],["bU8V9lQPr3s",29,1,0],["PX3dPCdSTgY",29,1,0],["9omB2YuL1Z8",30,0,0],["rN-IiOXyCTo",30,1,0],["yiReY7BothA",30,1,0],["mRQMPhB6c_Y",31,0,0],["ieTxQ0bvSuQ",31,1,0],["OHIMU1eRgrI",31,1,0],["TLJa6rBI6pE",32,0,0],["0fwM9aTQK_c",32,1,0],["jylKH_EKUMk",32,1,0],["sQ6HMW37Xh4",33,0,0],["D5Et9y_L_70",33,1,0],["XXPzbMBNzrY",34,0,0],["tdNnrY5vj1M",34,1,0],["vEs5dg-ugzY",34,1,0],["Lm2qTz13GYQ",35,0,0],["nprgm-55chU",36,0,0],["AKBQ7NFkR80",37,0,0],["AV2-0chexqQ",38,0,0],["gDcvt3huH_g",35,2,1],["UP_TH99hZYg",35,2,2],["8YFu9R9MMxg",35,2,3],["ABdABo27F8c",35,2,4],["2GRJq4Y9gOo",36,2,5],["G95E7rjSvSQ",36,2,6],["AZNVY021qTo",36,2,7],["-vKhj6LHVlQ",36,2,8],["3mu_hLjqK7k",37,2,9],["nT_UcGw4vXI",37,2,10],["0cnIEqI_J1w",37,2,11],["3-WJu7E3tzo",37,0,0],["T8VF9d_V0eU",38,2,13],["5L2YlNDIxko",38,2,14],["plVpgXzQ8a0",38,2,15],["hXILgGjXZ_k",38,2,16],["s8VJa3pR9sc",39,0,0],["Yi0-18Md5_A",40,0,0],["f0SNtoGIuTY",41,0,0],["u_xbxenErqg",42,0,0],["gBZZJf-ErmA",43,0,0],["dpKDAuHpqeI",44,0,0],["OSvs4Lxn9j4",45,0,0],["Ap9QwMbNTEY",46,0,0],["rOAwk7uFqQQ",47,0,0],["vQ1UIDyBXbc",48,0,0],["-CYHEQ0eEMU",39,2,1],["7bG7cTT0IzU",39,2,2],["YB4IelrxmHc",39,2,3],["kHNhU578-lM",39,2,4],["6m-ocUq9zR4",40,2,5],["S4Wpq9CWGjk",40,2,6],["Yj51yPUqMV4",40,2,7],["HAIKpM6VBaM",40,2,8],["A-CyOKoclZU",41,2,9],["PGGx_4ZbVaU",41,2,10],["3ZwxdDNx27E",41,2,11],["nUOOmP4-L_A",41,2,12],["TCgVgHvW7DU",42,2,13],["sxtn_ZfQtbo",42,2,14],["ZsyH3ICruoA",42,2,15],["GS_ZzJaOmkE",42,2,16],["XJKCTHDZuEA",43,2,17],["XlNhgJ2qNeI",43,2,18],["f87v-f7lMVk",43,2,19],["jo7r258hu-8",43,2,20],["nJasm5s6cqc",44,2,21],["jNopAfD52XQ",44,2,22],["s877Vu-3rLk",44,2,23],["hh-BA0eJys8",45,2,25],["JIDZi-Esj8E",44,2,24],["m28TJDVImSU",45,2,26],["0cyjjJEgFs8",45,2,27],["k_0rz19K31U",45,2,28],["hFg-X5_pcUM",46,2,29],["li27_C1zaH0",46,2,30],["v0c9UvYUBA8",46,2,31],["qiPBN6xgBjY",46,2,32],["iboHO75yMDg",47,2,33],["o7L1WxjJWRA",47,2,34],["BbX1UGn7BCo",47,2,35],["5Y4jvbrmTZw",47,2,36],["bKmDKgMThWQ",48,2,37],["QIiMD8uRgSE",48,2,38],["wZ8BoZWxBTU",48,2,39],["VGUuI4Q2wH0",48,2,40],["4Tt_XQw5Q9k",49,0,0],["4SdYPqvsbps",49,1,0],["JQqGSOoY6oE",50,0,0],["laXccxIByaU",50,1,0],["aWv9LlHCdhQ",51,0,0],["srdrcbUnS30",51,1,0],["nCbGwDXql3k",52,0,0],["-9-EfWeOi5w",52,1,0],["H2WstZIjwDw",53,0,0],["pTsh_NdOOLk",53,1,0],["eS6-1Ajt4go",54,0,0],["CMN9Xh5A4Es",54,1,0],["TNpl9twtT_Q",55,0,0],["PHCpV27Is4o",55,1,0],["TmdM0stXU7s",56,0,0],["iXCVWYVXp1s",56,1,0],["dreip9BSJg4",57,0,0],["32OxKF-FoNw",58,0,0],["hUWh15C6Pqk",59,0,0],["2bsDP-r-RGk",60,0,0],["Brq2IJQBygo",61,0,0],["5dBY5fTdMhc",62,0,0],["136_ZkikgA4",63,0,0],["i02wmHzONyM",57,2,1],["m83_5eJVrZ8",57,2,2],["LQfINbItH9k",57,2,3],["xFr1saVX08k",58,2,4],["9axA1-SSmBY",58,2,5],["TRBGSbXkoB0",58,2,6],["b2iXU_Ok4uA",59,2,7],["VWgSuLIBOOs",59,2,8],["5cSUAbHUY90",59,2,9],["QLqskyVhcZc",60,2,10],["7qEaOGcElKc",60,2,11],["GbQBotYQ1aw",60,2,12],["cvUNv-vrmLs",61,2,13],["rvQ2yA3epg4",61,2,14],["DEiNQ2-leHU",61,2,15],["Tzy8aMcI1xc",62,2,16],["WnMFfK7EXVU",62,2,17],["KVDh4gy86PQ",62,2,18],["APMyOPzoqcQ",63,2,19],["JdnjkyLtZDw",63,2,20],["RWRV45-9t-g",63,2,21],["-EpxMKCuyn0",63,2,22],["NuCN0w01EdE",63,2,23],["oE0epGjQEyc",64,0,0],["FPqjEaeN72U",64,1,0],["wnGpdPYIeoI",65,0,0],["1w6Bpg6QZK4",65,1,0],["EIzfWhKDqis",66,0,0],["yRtc1wJUjBU",66,1,0],["DhMK1F2uW1Q",67,0,0],["9nfVbD7cXXE",67,1,0],["rlhuGvO_WBI",68,0,0],["Eha1evK2prU",67,1,0],["XhOp3G3LdzI",69,0,0],["tvNxqg697WY",69,0,0],["R0xhMzzIFQo",70,0,0],["i2mR6z1pF0A",70,1,0],["eSt2lMEhR-8",71,0,0],["WdFtto8aL-8",71,1,0],["ih_p3n6fT68",72,0,0],["jK_RdO-iSpo",72,1,0],["PLxFmdAyIaY",73,0,0],["ygOV2IfxnkM",74,0,0],["cxfKgU1esLw",75,0,0],["_ojiHIwALuo",76,0,0],["LDcxu9L9luo",77,0,0],["wkA7J_CQ_EE",78,0,0],["Cax716pGwDc",73,2,1],["DsTjMr0W7WI",73,2,2],["ICcpRiSOzuo",73,2,3],["6avV1NTqQBM",74,2,4],["TMzDvx06QRA",74,2,5],["jD5SXLTMRVE",74,2,6],["xJmIApKFrcw",75,2,7],["NWKAg_7SV1U",75,2,8],["BQ5Mpn1nY5o",75,2,9],["r3Wq4n8i2q0",76,2,10],["PMi8eweYTzw",76,2,10],["keBNTNroMDg",76,2,12],["PgAtqbJkFko",77,2,13],["O3QW86TkdXg",77,2,14],["pPni2qi-86g",77,2,15],["D8Gl28O9dK4",78,2,16],["6LVEgkqxEbI",78,2,17],["ZTAuacpc5Q8",78,2,18],["oAziZ0eLy68",79,0,0],["tf01dDZA4PI",79,0,0],["sxmNTfmhs9k",80,0,0],["PLKWjbBC2FI",80,0,0],["M6eOW9wdWDU",81,0,0],["mCrk6vVR78M",81,0,0],["RsJ0IsBjcsE",82,0,0],["731rgD7zI0g",82,0,0],["8ZG2wN_mIw0",83,0,0],["Tnyyr_ia-8A",83,0,0],["WjA4X6mPnZE",84,0,0],["1JGOLwC04y0",84,0,0],["Dtws-e2jZzI",85,0,0],["5BvOjR_7D7I",85,0,0],["r95WvAeOuLg",86,0,0],["x_NjsWK0Mmo",86,0,0],["ZaFJwEvUmWQ",87,0,0],["lbnQsMw32pc",87,0,0],["xX5_E8M6zs4",88,0,0],["DxeJszUYnJg",88,0,0],["BSmoM5QeY7g",89,0,0],["T4VCeebMWLI",90,0,0],["t1j3HIp5YWo",91,0,0],["W8xGSdJ98N8",92,0,0],["o9uWYx6ugNU",93,0,0],["AOI0s9UAln4",89,2,1],["W9rHI-XZKFU",89,2,2],["3sibekjyfTo",89,2,3],["YEkkvZwDvZs",90,2,4],["-3sDRT9FYmc",90,2,5],["zq9_Lex0v-o",90,2,6],["dTPHPvbbFLA",91,2,7],["dBSgsFaLm6w",91,2,8],["cMoCV10zfWA",91,2,9],["cR6dyfFlYo4",92,2,10],["OIdZmkVk5_E",92,2,11],["K1FVoC6x3Xs",92,2,12],["tVDdV5IztoQ",93,2,13],["c7H2hyYacmQ",93,2,14],["AxKJWgpLQ7M",93,2,15],["g8ZbFeoUhb0",94,0,0],["pIR__InufC0",94,0,0],["MzvC6xfF4i0",95,0,0],["g6dNKBrYO5k",95,0,0],["IJxWAVRX0Dw",96,0,0],["6QzgVSAHyXU",96,0,0],["073mRqaAExA",97,0,0],["I_hiheUCiLI",97,0,0],["oakvMzl5AXo",98,0,0],["NgOQYjreTfo",98,0,0],["GHSqzsRcMF8",99,0,0],["7bqbYzZyhas",99,0,0],["ZHzzf7xPdNA",100,0,0],["bhXwThsxaL8",100,0,0],["tJQ-vMO-qV8",101,0,0],["BAKNWnf0Tbs",101,0,0],["p8ycpsyRp0M",102,0,0],["w1_tckez0sc",102,0,0],["Qp42X6-4S9w",103,0,0],["b_2x1_doBCA",103,0,0],["Ol4La1-di8o",104,0,0],["JNRpC7pqVMo",105,0,0],["T2rNu1NNnzU",106,0,0],["mdt3OoadgRs",107,0,0],["Q2TMtvp57GE",104,2,1],["pnBBf7TE0HQ",104,2,2],["zcJN9w3pYlg",104,2,3],["_yTuwFkdocA",105,2,4],["AaYJloYUGAw",105,2,5],["lx3yZMxe3SM",105,2,6],["o-T427p-Uoc",106,2,7],["h6tN8Pvwijk",106,2,8],["tqA4MSVWu3c",106,2,9],["rQDhfT4dDes",107,2,10],["7BryoZv_DUk",0,2,11],["FQBPnHme54s",107,2,11],["HAT-BbvXUxo",108,0,0],["WRP5KyGofUk",109,0,0],["JcwsMnM5fO4",110,0,0],["A2xZJAJFxWo",111,0,0],["KLLeabGsXy4",112,0,0],["NuK_sts30Yc",113,0,0],["aC2lmHhiRfI",114,0,0],["1TZBJ7yvDSQ",115,0,0],["ejGM6xAXcQs",116,0,0],["QPloZgDEEcc",117,0,0],["Po2cimRUEjM",118,0,0],["ddSmCqQm7-4",119,0,0],["Z6854VPZKiM",120,0,0],["ntgd4E3fh3Y",121,0,0],["PzXognTixAQ",122,0,0],["2LZl-39wdRE",123,0,0],["rlAme9b-ZmQ",124,0,0],["zL5lzmIyiOE",125,0,0],["Sc3gG0bcZfg",126,0,0],["LwkS_3gQcrM",127,0,0],["p_tDzezr7xo",128,0,0],["F5ThbpC2nx0",129,0,0],["L3hzTRiAn7E",130,0,0],["6PprxkhsNJE",131,0,0],["CdrBvqZRuoQ",132,0,0],["MwUir_R4FOA",108,2,1],["g81K9w2xNcI",108,2,2],["9qwiwUTofAQ",108,2,3],["snTGZrEUkDU",108,2,4],["q4son28KjDI",108,2,5],["LrhPl5Xxj0Q",108,2,6],["Qo4ENziCAdc",108,2,7],["T9nePm4hsF0",108,2,8],["nIPrrbk5GWQ",109,2,9],["hWwo3Tmmxeg",109,2,10],["27Du3qgrqxk",109,2,11],["j_vgjs7Bnoo",109,2,12],["6kxLGpLfaLo",109,2,13],["zmGV8G_PnDI",109,2,14],["X5L7CFLoFxw",109,2,15],["kqeX1QOtedo",109,2,16],["Ro1PuzJf8VQ",110,2,17],["FgKyKab4EGA",1102,2,18],["xU2QcwyuD3I",110,2,19],["yGGrgDH7Nbo",110,2,20],["1NTD2v4k7hc",110,2,21],["6wID4gvVbT8",110,2,22],["7y_vfQecAuk",110,2,23],["n_4kinKzW5A",110,2,24],["UA5Hitp7FFE",111,2,25],["3qMtSYSVdeg",111,2,26],["5jsl0e5_leM",111,2,27],["y6eq69_IVNU",111,2,28],["3fVNeq4rLNU",111,2,29],["TPR8Yu5yJig",111,2,30],["Rh_FkLO3qNg",111,2,31],["3U-1_JDhXSU",111,2,32],["wVF6-QADNjQ",112,2,33],["p-QlZFXASds",112,2,34],["6rJtriNBfnw",112,2,35],["ymrGHDhOilA",112,2,36],["Ra5158tpwGk",112,2,37],["A80meqkP3Aw",112,2,38],["OdWXqb7zLPM",112,2,39],["YLlqz8qYKPo",112,2,40],["FSxy-DwHOxE",113,2,41],["BmXo0jyn8YQ",113,2,42],["SGw3oxIS_wE",113,2,43],["YZZ9m-BhySc",113,2,44],["n9hm_HJkW-Q",113,2,45],["fOtocCMsmcU",113,2,46],["U1tR7bW9eEA",113,2,47],["ZMKdolPRZKQ",113,2,48],["uXVPaRKvc88",114,2,49],["NCtnGRm7hTs",114,2,50],["nGCP5gpmMVU",114,2,51],["gfbI2qacQfQ",114,2,52],["Jfc80Nhs-B0",114,2,53],["lJsjFNWdpoA",114,2,54],["F_V2wZy03M0",114,2,55],["r0LdhYrOppY",114,2,56],["APFFTnNDHjI",115,2,57],["_nJe12byVYE",115,2,58],["dupji62a-lg",115,2,59],["rfISCgZxhHY",115,2,60],["2MbDs6pH4vw",115,2,61],["RK1LGCh4Teo",115,2,62],["NwQAfumlPIo",115,2,63],["YXcCn7h1yoQ",115,2,64],["nAxyuH3ZVXo",116,2,65],["ktDuSl7a8N0",116,2,66],["70b8tQFfwD4",116,2,67],["lqe2Pv6TyyA",116,2,68],["FyjYs6WtYh8",116,2,69],["EYllR5Yhltw",116,2,70],["sqC7Hqj7yYE",116,2,71],["pgiIxD9OQx8",116,2,72],["UVDnhj-jZl0",117,2,73],["6bjhoBP4J1M",117,2,74],["aCwdw0zLJcE",117,2,75],["5RP_M9MTnuM",117,2,76],["yQUUvUSAElw",117,2,77],["KiSmrrC1-dQ",117,2,78],["WQDF-ZisVgw",117,2,79],["-oTiq1rsDB4",117,2,80],["uZ1Z7VuTym0",118,2,81],["cyiJ0Xe1KxU",118,2,82],["7d54rOnrT-I",118,2,83],["5l83WWxmWt0",118,2,84],["HoZhhvikKQI",118,2,85],["o716N4IQ99w",118,2,86],["Bl7XGRuqLv4",118,2,87],["FjKl0v7VhpA",118,2,88],["Uk3veZlY_mo",119,2,89],["WNRhpOtMcQk",119,2,90],["SOhkhu04LGA",119,2,91],["FQ-6RN9I8SQ",119,2,92],["GjENcXRhcks",119,2,93],["06gEEON9jGY",119,2,94],["noed-Tc_zxM",119,2,95],["3E6pUJz76As",119,2,96],["34oIKR_q9YY",120,2,97],["sRiuHFCeens",120,2,98],["-nETw_6J2kI",120,2,99],["aPId0iIzaJU",120,2,100],["_QHmNFSHj9c",120,2,101],["jd0PRZEhuqQ",120,2,102],["GuXiDytJc-8",120,2,103],["gEYLyroDnXo",120,2,104],["uurmxVxY0jE",121,2,105],["KSVSDbxVvJQ",121,2,106],["zvLrxzdVh7Y",121,2,107],["9TUdKHAHAlI",121,2,108],["CDOrBnzGHFk",121,2,109],["2G062iRKu7Q",121,2,110],["PPZmie7ULZo",121,2,111],["ZOJ3zWrITF0",121,2,112],["fx1FmtzxfqQ",113,2,113],["apNpUMriBsQ",122,2,114],["4QhrL9W0Ifc",122,2,115],["0dO8RzM7Rkw",122,2,116],["hXYieVvrWDk",122,2,117],["xIs3eJ3SkTM",122,2,118],["p6rJpxOZarc",122,2,119],["G41yyzJnxkM",122,2,120],["tDCeUVdsz-g",123,2,121],["5Waw6HKT2aU",123,2,122],["uIH2CDspjLA",123,2,123],["qsyaY0lj3ws",123,2,124],["HaIA3GOufys",123,2,125],["Eg-oDKsMJbI",123,2,126],["PGMtBTyaPMo",123,2,127],["wcX1CVsXxdY",123,2,128],["4cFViiBF8MA",124,2,129],["MguS0fCnvuI",124,2,130],["6-EflOBLhqY",124,2,131],["Ragujw43ehI",124,2,132],["itteJagyqWg",124,2,133],["ltPbjDUaFDg",124,2,134],["Jwe1AKBU8UI",124,2,135],["32ZCfCLkrLw",124,2,136],["ScvANI4NWXM",125,2,137],["kSyo010WrrQ",125,2,138],["95CpA8mMj1s",125,2,139],["aU4MK4QQ9YM",125,2,140],["qygGrWcgqpo",125,2,141],["8ox0UhMOnDk",125,2,142],["BWxDnGrK488",125,2,143],["NtXkuTPoGyc",125,2,144],["turqXrQvQzk",126,2,145],["v7ADfztH-nc",126,2,146],["6Hxsa-b5RuE",126,2,147],["KkFx3KIVKN8",126,2,148],["ws1ohN6WH-k",126,2,149],["MvZHWsxLT8M",126,2,150],["W3oaRNr_5KM",126,2,151],["wsI9J7WBYuQ",126,2,152],["2glcsYdj8h4",127,2,153],["ivVEnlbkLj4",127,2,154],["1RbfqaILfj0",127,2,155],["CmNH-Dqwjmg",127,2,156],["IL7qCBPO_XE",127,2,157],["93aIqeMI1rM",127,2,158],["ox-JlVVXBSM",127,2,159],["WuH0fCSRIJk",127,2,160],["THlAxCxe_CY",128,2,161],["PbixHGu7txo",128,2,162],["TLrH9zKKV7Y",128,2,163],["UdjaUWINTs0",128,2,164],["c21eUvlBoJs",128,2,165],["Etf-OC8qNSU",128,2,166],["aFiq5aELEmo",128,2,167],["QySO46zukgs",128,2,168],["-ijzs0M9eQs",129,2,169],["Kh-EE8k9Vcc",129,2,170],["9IiBOa6NbX0",129,2,171],["yv-6daS0DQU",129,2,172],["L69kp9OuBpA",129,2,173],["n2KsiNIH0n8",129,2,174],["dD-ftQ1eyTY",129,2,175],["vVcv6FR8g3w",129,2,176],["2aBdKgNdLFE",130,2,177],["RHFEz1EtwYQ",130,2,178],["ZarRSwMsS7c",130,2,179],["TQ1TDrCRMBU",130,2,180],["WbL3_mqC88Q",130,2,181],["cnSgfmkznSg",130,2,182],["IaEDFna_v9o",130,2,183],["LDhUF2C2H6s",130,2,184],["JPiGhlP8GwY",131,2,185],["6exZ4o2dDS8",131,2,186],["ZizXm3aAaFA",131,2,187],["2SPGcm_eqFA",131,2,188],["D2am-xP36uw",131,2,189],["IVJQ8KFZLMY",131,2,190],["dsHUsKnWY70",131,2,191],["41I6kKb9a-U",131,2,192],["JW1xumAmjds",132,2,193],["bfr0Nw2X3Mw",132,2,194],["qWlW9a4uQvM",132,2,195],["Lk2aarosNQE",132,2,196],["RgfnPokf7wo",132,2,197],["xqxuisDZ-_c",132,2,198],["Je02SLS7vT4",132,2,199],["jJ8xmm6kO7c",132,2,200],["6Y-aBWo-xFk",1,0,0],["7wN6Zi_KUE8",2,0,0],["8AbGUAK9lFY",3,0,0],["wmx8-shCavQ",4,0,0],["b5p_jAGlS_U",5,0,0],["Z3XpJfJbo5o",6,0,0],["mOy4ovI0uVA",7,0,0],["627T-sjxHPY",8,0,0],["aWkbGnJek3I",9,0,0],["afvytX9f7Qc",10,0,0],["Dt6YcGWfAq8",11,0,0],["7RF7DDOP2Qo",12,0,0],["JGfjtkrkMqY",13,0,0],["zH89bfUT9ao",14,0,0],["6-pJl799D7o",15,0,0],["VNoNT1ao4O0",16,0,0],["JIcqcosZBnw",17,0,0],["3ziNb02rfMc",18,0,0],["ILCnGPYI3OM",19,0,0],["djeXuK4rxj0",20,0,0],["VZ4sZGdG1L0",21,0,0],["TxGvu8K5Pew",22,0,0],["wU7qKMncMjY",23,0,0],["T6ZshkOzC20",24,0,0],["AvLgysmpY3w",25,0,0],["ooke6PBRcfg",26,0,0],["6fBL9ISy-co",27,0,0],["arjzyFCZJZk",28,0,0],["ztw1hFitLPk",29,0,0],["KN65k9GPUoQ",30,0,0],["0Ux7ikp5oU0",31,0,0],["9Bt5UOSFDHM",32,0,0],["z7pX8XcW8E8",33,0,0],["OvtrUyXDpF4",34,0,0],["2D-jdOX268Y",35,0,0],["nag2dLag6Mw",36,0,0],["XkVAGg0pU5g",37,0,0],["WoYnpIk0r2k",38,0,0],["pD3c0_f-_AE",39,0,0],["7Gy00D597Eo",40,0,0],["16L1uNFYPqs",41,0,0],["yaPZmOtXBlQ",42,0,0],["eCNc_I55vz8",43,0,0],["Rw27Qs2JOYI",44,0,0],["_xZWuUj1DOQ",45,0,0],["sABn1YHelKw",46,0,0],["2o_zog6GIXw",47,0,0],["PRiE6DXD7lI",48,0,0],["Q9G4lX4u1Zo",49,0,0],["84-HjVxnaAU",50,0,0],["e9vi3UqDrNc",51,0,0],["1OO2hNgMcck",52,0,0],["0nQa3gwCzvc",53,0,0],["4ag10gdRFbY",54,0,0],["-XzHXkt67Lo",55,0,0],["Nztz_W8aEw4",56,0,0],["XGpnERZ1zWc",57,0,0],["CqV0TBKQWEI",58,0,0],["CVZrDGyYhbA",59,0,0],["5XFUwNLf7Uc",60,0,0],["wSuNvEBsqk0",61,0,0],["aerMJJzxWUs",62,0,0],["-TpkXgLV0Ys",63,0,0],["1eKG1EyLU0k",64,0,0],["n75lEDx87mM",65,0,0],["LBnXzY3pz6g",66,0,0],["mH6Jca_o268",67,0,0],["voKmU5AfbwI",68,0,0],["L_tXur1LVG4",69,0,0],["rEmN3IMoCYg",70,0,0],["SkDiQtjFm00",71,0,0],["AqmgQBe741g",72,0,0],["BaWEgNWccLM",73,0,0],["BGQTAMHPHSk",74,0,0],["uccQ6SFpbvs",75,0,0],["YyybAN8abio",76,0,0],["ylCsklDbyD4",77,0,0],["RM0xj_rJuJA",78,0,0],["wu5HW88zdBs",79,0,0],["njoAWvfJvGw",80,0,0],["Edx-q4GSYKw",81,0,0],["pNBj4vVBCQE",82,0,0],["v09RNPdOFPw",83,0,0],["uU8IdfLtAUE",84,0,0],["mtZh7u_fWlg",85,0,0],["fNZOGDWS1bI",86,0,0],["XZaA6YHblsk",87,0,0],["LicM_0QgOXc",88,0,0],["xlyvXTjujfM",89,0,0],["mMBCt0fz4sU",90,0,0],["LB-FLaeeVTY",91,0,0],["z6KQp0sPPlc",92,0,0],["zJswzDK9nmU",93,0,0],["x-LHIK_jLbA",94,0,0],["W6ej4s1D-uU",95,0,0],["UxX1Ca2w7iY",96,0,0],["w2Vfv78JRJs",97,0,0],["vTwVkeNhL9w",98,0,0],["lb7BIFd7hkU",99,0,0],["uMnSSiu9x-I",100,0,0],["Zkc-HfcTxYg",101,0,0],["tKnbjHXOWN8",102,0,0],["vZ4DztlPmlE",103,0,0],["-5vtErTryRg",104,0,0],["4ILINM-gqJc",105,0,0],["gCCiksORLrE",106,0,0],["xJB1jAnwZq8",107,0,0],["L8dJyY7bwA8",108,0,0],["WmLP5zSdXkg",109,0,0],["_MVbl3J4gLk",110,0,0],["Z0U4jE0b5kE",111,0,0],["4O_tfXXjbPE",112,0,0],["OUUofLkQpBg",113,0,0],["Ja2f3ArctNU",114,0,0],["fyITxgKw6aM",115,0,0],["hDo-ksJ1vCA",116,0,0],["6F9fPzJXT3o",117,0,0],["6wwJ4xt3Mcc",118,0,0],["PudAuKV-JUA",119,0,0],["c47tfixwjmg",120,0,0],["DQ6i0kfwZsc",121,0,0],["CDucvH4DGwk",122,0,0],["9FL2Fgxlrx4",123,0,0],["qSH1nyNiVpk",124,0,0],["9qfvYw6yliA",125,0,0],["nMYs6du8Xq4",126,0,0],["Is-CpxGBypU",127,0,0],["SuZ1e0DraRM",128,0,0],["acPBXU2hhy8",129,0,0],["waUoMLhDPNE",130,0,0],["1aSBuFMUQxg",131,0,0],["VIjjiAjH2xs",132,0,0],["5wQ7WAns-RU",133,0,0],["57oyWTqbqRg",134,0,0],["znF7hxcMMdY",135,0,0],["971qeC8FV38",136,0,0],["vbEQqdym3tY",137,0,0],["jI0KsioJ_yc",138,0,0],["5o2o9yvM3ac",139,0,0],["2monc4wtm_U",140,0,0],["OheAtXhdvck",141,0,0],["PLKI9VJa0Q0",142,0,0],["aCqxPOa0H-k",143,0,0],["O7p9wTcIBvs",144,0,0],["EDc9Rzuos_g",145,0,0],["AdsiHDc3Gdc",146,0,0],["0KDNnhQjUVA",147,0,0],["ScvhZRM5aQ8",148,0,0],["DhPZFqqoGZw",149,0,0],["5LN3tGLRikU",150,0,0],["YaTRJuFGZs0",151,0,0],["4JJ6ESt3CpM",152,0,0],["_xuKPBWQ3lE",153,0,0],["JZZ3VN3VGOk",154,0,0],["zR619xzB4QA",155,0,0],["t6IQQpOFxEg",156,0,0],["QrAebOX9TgY",157,0,0],["RxaLX028ugM",158,0,0],["GvKF002zk-Y",159,0,0],["ilrKB4uOV_E",160,0,0],["tP_4PCmJbvs",161,0,0],["4cKCGqXKMNs",162,0,0],["kvOwU-wZo9M",163,0,0],["GvrXPorKkmI",164,0,0],["R_VKQo13JmA",165,0,0],["vGMflOrXBzY",166,0,0],["PY_o4_sdnek",167,0,0],["9nNigIm1Akk",168,0,0],["xBpxRapeiuY",169,0,0],["-QP4MCBOyzs",170,0,0],["lKoNDD5IM9s",171,0,0],["-7gwcEOxAn8",172,0,0],["3CfNlzHSSlw",173,0,0],["ZwdpRugBQGE",174,0,0],["blTyEgvZFyQ",175,0,0],["QV88kLOVW2c",176,0,0],["i2VRZ9uNKmw",177,0,0],["0BdQ2W554fo",178,0,0],["z9jt_3ISJl8",179,0,0],["E7Pc3RA_DJc",180,0,0],["3P53WrN-qHc",181,0,0],["USRViY8eeDE",182,0,0],["rCFZh2pS7a0",183,0,0],["8LcIOOH_TLY",184,0,0],["55RkCI11h04",185,0,0],["v4lfH41hB70",186,0,0],["r6tzLI6p-Js",187,0,0],["bdhUY3hZaO4",188,0,0],["1RHT-1gXwQI",189,0,0],["jA5BACGbzAU",190,0,0],["Sjg1M5T4NVg",191,0,0],["iuYjBodS53o",192,0,0],["fhiXo0tmZTM",193,0,0],["hxOvfSGg3b8",194,0,0],["_znluEngBpw",195,0,0],["6k6QwYL6NzA",196,0,0],["cN7Hhf8QT8k",197,0,0],["-RQo0r2Ww_4",198,0,0],["8MpJY6XPViY",199,0,0],["wZWknSluMg8",200,0,0],["IxjdanDgqWE",201,0,0],["t2kyC8K1PGM",202,0,0],["bJVW8-1MAKQ",203,0,0],["3DYSYeGHees",204,0,0],["tFzvLQ47oFM",205,0,0],["F3e4Y2XSlfk",206,0,0],["AZ38r8XzrwI",207,0,0],["cIdrYY0ZlPE",208,0,0],["ccHftNth5O8",209,0,0],["YARyesI3lM8",210,0,0],["JSHrZuAy9uo",211,0,0],["uER2VzYpbK4",212,0,0],["typLVnU2noM",213,0,0],["l9Z2Fbs_Pio",214,0,0],["iLQWtCKU0_U",215,0,0],["lx-HhzfqGVM",216,0,0],["tobxRohwPjA",217,0,0],["pTOI1PtFheQ",218,0,0],["7u2Zlfpi6Ts",219,0,0],["DwGHGjDPw-o",220,0,0],["_QTpE9YRIog",221,0,0],["ks-mhOUQ2aU",222,0,0],["Lgw8E7O2I68",223,0,0],["Wuzo002R0K4",224,0,0],["l3dyI_ckQ30",225,0,0],["k30PW6j0i50",226,0,0],["yWD0lq0qim4",227,0,0],["MFWUxY-z6nE",228,0,0],["bwRD9zg5tb4",229,0,0],["0-tIcRtT1-A",230,0,0],["QgvQcvK-lso",231,0,0],["nP2DuCcttjk",232,0,0],["LvXaf3U0CxA",233,0,0],["9D6GbkSmLF8",234,0,0],["w9CA-qDPGSk",235,0,0],["yvdUvIO4Wio",236,0,0],["UJfeqgQS9zA",237,0,0],["2ABpjUEPBiA",238,0,0],["Fceo3f1fxXw",239,0,0],["6SjnW1QF1JQ",240,0,0],["lKy85mitOPo",241,0,0],["JxOVqSLIlRg",242,0,0],["t1gEkIssg3M",243,0,0],["yOcwLI426I8",244,0,0],["3N-40Dw9QWk",245,0,0],["0vQxLfCmYfI",246,0,0],["HEVmZKB6uQs",247,0,0],["T-emPJCqi20",248,0,0],["gzKOAleAJ28",249,0,0],["yEi4PESsnD8",250,0,0],["cpNfQQm8ppk",251,0,0],["cuMVO-E9mDk",252,0,0],["RV1fTUlUBxs",253,0,0],["xn87N8mbCFI",254,0,0],["4_eJuqL7KjQ",255,0,0],["62kfQH0uwIU",256,0,0],["x3pFKllH8qQ",257,0,0],["r7CD2z0_cCw",258,0,0],["cO9m5FhSfeQ",259,0,0],["0pCDJrj2h9c",260,0,0],["GEorr2nlRyw",261,0,0],["fqJX2kpgjKI",262,0,0],["HLnsxWAdwBM",263,0,0],["tGdVrBWCULk",264,0,0],["7htKKtUUU9Q",265,0,0],["HGwwoQB0BIA",266,0,0],["Gwzq4L4eH10",267,0,0],["93ZV3zIV5lE",268,0,0],["qjb3rtyG8po",269,0,0],["yC_fCbaaP-0",270,0,0],["7uXgtLHhtd0",271,0,0],["zyqB5_bQY_U",272,0,0],["zMMSBNL4S4Q",273,0,0],["32LQLh2Zl4Y",274,0,0],["ynJfeW4dY4g",275,0,0],["jEQhf2BMDLE",276,0,0],["b4axnYorr1o",277,0,0],["IgnBYQQH81s",278,0,0],["Fd6HIISRxLw",279,0,0],["LHaUmWpHynQ",280,0,0],["KauDR8zhnUg",281,0,0],["ZcLn9XZ9hJ4",282,0,0],["PHoQ5C1_s5M",283,0,0],["JpZZ8LsbDOM",284,0,0],["w1exWPiXJnE",285,0,0],["vDfNqN07Nrg",286,0,0],["7oXKFv4HBvU",287,0,0],["-SXjBKFc5A8",288,0,0],["6pY3oKwsuVo",289,0,0],["t4mUFGMJ200",290,0,0],["GaBhdIumMjw",291,0,0],["iQ2gs95tS3w",292,0,0],["5mFaI_cnaB8",293,0,0],["y8pcQGaMKI0",294,0,0],["aMFoPLFTK10",295,0,0],["JUK5V_e7APs",296,0,0],["RIPD00DDXEk",297,0,0],["QnPG4-AXL1Y",298,0,0],["seJGk3K9Hhc",299,0,0],["H4-rXitQBN8",300,0,0],["pxfF4MkYdPc",301,0,0],["IWAGej8reHQ",302,0,0],["eE_sqWpL-lo",303,0,0],["Cl8fpgT9kpU",304,0,0],["tqepHq1HYIU",305,0,0],["zCiBUcG3RQc",306,0,0],["MC0EPmPnTH8",307,0,0],["34voAP9kXs8",308,0,0],["Bj81J-FkBZw",309,0,0],["a2NXNeUKhcU",310,0,0],["FCaNCyP2Gig",311,0,0],["ULXdcFczelM",312,0,0],["tuchsCyihk0",313,0,0],["LfE7sTtbAaM",314,0,0],["CN2Qyb6cDDQ",315,0,0],["V5PCgdjBQf8",316,0,0],["rNFbSDcKxFQ",317,0,0],["3vSqFLZ47cc",318,0,0],["EEMmcyY2nvc",319,0,0],["NHpmiyw-03A",320,0,0],["3au2M8X2GDg",321,0,0],["cTtcmycgs9o",322,0,0],["Y3De1dEjMpI",323,0,0],["89Mf5EveRw4",324,0,0],["M_yHSraY7do",325,0,0],["JdBOtCUWatQ",326,0,0],["LHYEp_lcNL0",327,0,0],["dmbTKXB2SNY",328,0,0],["JogvXBORbjA",329,0,0],["X9V_1oESx88",330,0,0],["i2cHBmDAuHk",331,0,0],["QThDpJOHdyc",332,0,0],["eHnidhHkJ38",333,0,0],["NzG1Hio8rO0",334,0,0],["1hU5sys68ko",335,0,0],["fGxRBo8Prko",336,0,0],["nGnDta7MpTw",337,0,0],["6Bt5ADjFeds",338,0,0],["dJFqUIPiv8g",339,0,0],["znGWaujz4dY",340,0,0],["A3ooQxRR9Ro",341,0,0],["u1F2FeOQhWU",342,0,0],["qUzK1fl16LU",343,0,0],["HkFu9dLvRfQ",344,0,0],["7YLcqzSlRDI",345,0,0],["RzI876ZqBes",346,0,0],["51tkabW1aBg",347,0,0],["HaZq2d-aeLQ",348,0,0],["LpT_JOOORv0",349,0,0],["m8d-2vUTABA",350,0,0],["187MuBk2syY",351,0,0],["5g6hKBtcWjU",352,0,0],["zTtL9HF0Bso",353,0,0],["6rFJkFq5f0s",354,0,0],["tMUvi-TiN9Y",355,0,0],["JQakF36fdwc",356,0,0],["twxjcoiGSYI",357,0,0],["LfB9hgzxu2M",358,0,0],["CoBA-riyrH8",359,0,0],["kLXfzU6AEsg",360,0,0],["m4GfvtDlJzU",361,0,0],["ccEH93IAjzU",362,0,0],["Vb_qQIGrsC4",363,0,0],["_8uTU-rGo3s",364,0,0],["Ytc7X2E1OJE",365,0,0],["xw6BVpuZ3Xg",366,0,0],["7mtDOgXlR44",367,0,0],["jHefHakYP-Y",368,0,0],["iL5pqF2fb5E",369,0,0],["GGewEZk_-YY",370,0,0],["PzhOMbNnGEk",371,0,0],["22E641d--ZY",372,0,0],["8z2Vf3MvNZg",373,0,0],["Zu6y9vy68rc",374,0,0],["SxRqzZSfIWA",375,0,0],["bautx0H74O8",376,0,0],["8ErrpA15xr4",377,0,0],["B7L8Qp60WQ8",378,0,0],["dkBIfciHgew",379,0,0],["anzAcaI6Jwg",380,0,0],["6O5TZvoiiKE",381,0,0],["uy1wHQ622gY",382,0,0],["gQRKzYFATVk",383,0,0],["SH_zHCpHsDw",384,0,0],["DcrhX1aKM5I",385,0,0],["3zJzXGdOE2I",386,0,0],["1bzkfOQmSg8",387,0,0],["fGORovrvsCI",388,0,0],["qSN1dvKOpXQ",389,0,0],["6CARMEA6fsk",390,0,0],["_xx5zV_IXbs",391,0,0],["HOSri9CY6Ys",392,0,0],["48pBCJU3V84",393,0,0],["ynmDfdQn0Fc",394,0,0],["vJq2km5EBso",395,0,0],["ztpH0Logihg",396,0,0],["KmEE5i4OFjI",397,0,0],["4SRBCZQmM6o",398,0,0],["LJP3bk9xDFY",399,0,0],["FJ65SemRRrc",400,0,0],["Lc0tLH9ZBPE",401,0,0],["f5JFIChEaH4",402,0,0],["HX_wvEAuZHE",403,0,0],["Z0bmkNxxpDY",404,0,0],["hUsrtQn6RRU",405,0,0],["KLYlFAGjCHY",406,0,0],["-0MD7pqU5Ew",407,0,0],["TptP-hqwuGY",408,0,0],["RUOA1dO9iiw",409,0,0],["GgIDvcQQgq0",410,0,0],["ZsutifmL32k",411,0,0],["siKj3zND3mQ",412,0,0],["twOr7oqoJdI",413,0,0],["QIu-mvOEwTQ",414,0,0],["vinzJJZzzNA",415,0,0],["kM09ncKEvHo",416,0,0],["2IKlGOk4ZnM",417,0,0],["Xid2RdySr5o",418,0,0],["5oZhkFdl5g4",419,0,0],["Z_1vYa6kf8Q",420,0,0],["Xs2rTSJT6NE",421,0,0],["as42O7HqnPA",422,0,0],["zijCu60S4QM",423,2,1],["eWs32sfc3jU",424,2,2],["vlU52s7dAPA",425,2,425],["o1R0o6ABfus",426,2,426],["P0nhXZoWJOI",427,2,427],["0j7-Cbi0d54",428,2,428],["zt8QkOAvJq4",429,2,429],["mHwX4dPIsqo",430,2,430],["h4pg4O-Zhqw",431,2,431],["S-CuTiOKQmU",432,2,432],["aIVCK9pj_Ek",433,2,433],["5QENCrtGZz8",434,2,434],["Ll4TZDpy2yI",435,2,435],["YzlZl19n7gg",436,2,436],["22zj4KtfvpM",437,2,437],["NYzxEc6gKgo",438,2,438],["uPa4RrF6KRo",439,2,439],["gXtZUKkcQgA",440,2,440],["a8i0pZjdaTI",441,2,441],["PbZibC1SVwM",442,2,442],["uDaP0QubPU0",443,2,443],["ijKvwt0ASpw",444,2,444],["d9TgqP0myr0",445,2,445],["v1MZ3R7sHkM",446,2,446],["dOrfNVFMwc8",447,2,447],["-o3rfZP-cII",449,2,449],["FjD1b1-3A2Y",450,2,450],["Z-4NF0Zr7dM",448,2,448],["uSaWsCA3P5E",451,2,451],["9hj56ggGhlE",452,2,452],["ZHypE6IGTAw",453,2,453],["YcnoCyxIPbs",454,2,454],["I0GA-7DqBSc",455,2,455],["oDQpEFhHU8o",456,2,456],["SoEuhBCGAm0",458,2,458],["iPYmPzC1jos",457,2,457],["qTKKaE7-8A4",459,2,459],["jaqNfqC8sPM",460,2,460],["EWQq_jwQjP4",461,2,461],["HzjJhBePx0E",462,2,462],["0eDwh7Fwpe8",463,2,463],["nO80dad93KE",464,2,464],["H9CRg1ysT7w",465,2,465],["V4Bu8OPuiSQ",466,2,466],["zjvg7GBj-zw",467,2,467],["hHQIbIBypXM",468,2,468],["MtBIaWM3_Lo",469,2,469],["hPjFN1WogLk",470,2,470],["mbOh1KZXEP0",471,2,471],["DiERIwfGNUs",472,2,472],["ZgSrIH1xTiw",473,2,473],["sRV37NcgSCM",474,2,474],["8GK7NUZGPlc",475,2,475],["elzZj39MbU4",476,2,476],["nvkXk82AqAg",477,2,477],["3xmOjbDJZgY",478,2,478],["2A0E_4Lka7A",479,2,479],["kDWJJskXtbQ",480,2,480],["Vn0w_PdX5Ss",481,2,481],["yT-Tlhe7hKk",0,3,0]];
+const INTERVALS = [1, 3, 7, 14, 30, 60];
+const KEY = "worddaily.v1";
+const $ = (id) => document.getElementById(id);
+
+function dstr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+function todayStr() { return dstr(new Date()); }
+function parseDate(s) { const p = s.split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+function addDays(s, n) { const d = parseDate(s); d.setDate(d.getDate() + n); return dstr(d); }
+function diffDays(a, b) { return Math.round((parseDate(b) - parseDate(a)) / 86400000); }
+function fmtDate(s, opts) {
+  return new Intl.DateTimeFormat("ru-RU", opts || { day: "numeric", month: "long" }).format(parseDate(s));
+}
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function plural(n, one, few, many) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return one;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+  return many;
+}
+
+let state = loadState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && typeof s.start === "string") {
+        s.prog = s.prog || {};
+        if (!Array.isArray(s.customWords)) s.customWords = [];
+        return s;
+      }
+    }
+  } catch (e) {}
+  return { start: todayStr(), prog: {}, customWords: [] };
+}
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function todayIdx() { return Math.max(0, diffDays(state.start, todayStr())); }
+function maxViewDay() { return Math.min(todayIdx(), COURSE.length - 1); }
+
+let viewDay = Math.min(todayIdx(), COURSE.length - 1);
+let revealed = new Set();
+let revealAll = false;
+let activeTab = "today";
+let session = null;
+let dictFilter = "all";
+let lessonFilter = "all";
+let lessonQuery = "";
+let currentLesson = 0;
+let notebookFilter = "";
+let lastToday = todayStr();
+
+function pOf(id) { return state.prog[id] || null; }
+function ensure(id) {
+  if (!state.prog[id]) state.prog[id] = { learned: false, box: 0, last: null, seen: 0 };
+  return state.prog[id];
+}
+function learnedCount(day) {
+  let n = 0;
+  for (let i = 0; i < PER_DAY; i++) {
+    const p = pOf(day * PER_DAY + i);
+    if (p && p.learned) n++;
+  }
+  return n;
+}
+function isDayDone(day) { return learnedCount(day) === PER_DAY; }
+function totalLearned() {
+  let n = 0;
+  for (const k in state.prog) if (state.prog[k].learned) n++;
+  return n;
+}
+function doneDays() {
+  let n = 0;
+  for (let d = 0; d < COURSE.length; d++) if (isDayDone(d)) n++;
+  return n;
+}
+function activityOn(date) {
+  let n = 0;
+  for (const w of ALL) {
+    const p = state.prog[w.id];
+    if (p && p.last === date) n++;
+  }
+  return n;
+}
+function streak() {
+  let d = todayStr();
+  if (activityOn(d) < PER_DAY) d = addDays(d, -1);
+  let s = 0, guard = 0;
+  while (guard < 400 && activityOn(d) >= PER_DAY) {
+    s++; d = addDays(d, -1); guard++;
+  }
+  return s;
+}
+function dueIds() {
+  const t = todayStr();
+  const ti = todayIdx();
+  const maxD = Math.min(ti, COURSE.length - 1);
+  const due = [];
+  const rest = [];
+  for (let d = 0; d <= maxD; d++) {
+    for (let i = 0; i < PER_DAY; i++) {
+      const id = d * PER_DAY + i;
+      const p = state.prog[id];
+      const last = p && p.last ? p.last : null;
+      const studied = !!(p && (last || p.learned || p.seen));
+      if (d === ti && !studied) continue;
+      if (!last) {
+        // слова из прошлых уроков, которые ещё не трогали, — для догоняющего повторения
+        if (d < ti) rest.push({ id, d, last: "", pr: ti - d });
+        continue;
+      }
+      const iv = p.box > 0 ? INTERVALS[Math.min(p.box, INTERVALS.length) - 1] : 0;
+      const dueDate = addDays(last, iv);
+      if (dueDate <= t) {
+        due.push({ id, d, last, pr: diffDays(dueDate, t) + (p.learned ? 0 : 2) });
+      } else if (d < ti && last !== t) {
+        // даже если по интервалу ещё рано, слова прошлых уроков добавляем в очередь
+        rest.push({ id, d, last, pr: 0 });
+      }
+    }
+  }
+  due.sort((a, b) => b.pr - a.pr || a.d - b.d);
+  rest.sort((a, b) => (a.last === b.last ? a.d - b.d : (a.last < b.last ? -1 : 1)));
+  return due.concat(rest).slice(0, 25).map(x => x.id);
+}
+
+const SPEAK_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+
+let voices = [];
+function loadVoices() {
+  try { voices = window.speechSynthesis ? speechSynthesis.getVoices() : []; } catch (e) { voices = []; }
+}
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.addEventListener("voiceschanged", loadVoices);
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.9;
+    const v = voices.find(x => /^en[-_]/i.test(x.lang));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ====== ОТРИСОВКА ====== */
+function renderToday() {
+  const d = Math.max(0, Math.min(viewDay, COURSE.length - 1));
+  viewDay = d;
+  const date = addDays(state.start, d);
+  const items = COURSE[d].items;
+  const n = learnedCount(d);
+
+  $("heroKicker").textContent = `День ${d + 1} из ${COURSE.length}`;
+  $("heroTitle").textContent = COURSE[d].theme;
+  $("heroDate").textContent = fmtDate(date, { weekday: "long", day: "numeric", month: "long" });
+  $("heroCount").textContent = `${n} / ${PER_DAY}`;
+  $("heroBar").style.width = (n / PER_DAY * 100) + "%";
+  $("startCards").textContent = n === PER_DAY ? "Повторить карточки" : "Учить карточками";
+  $("revealAll").textContent = revealAll ? "Скрыть переводы" : "Показать переводы";
+
+  $("wordList").innerHTML = items.map((it, i) => {
+    const id = d * PER_DAY + i;
+    const p = pOf(id);
+    const learned = !!(p && p.learned);
+    const open = revealAll || revealed.has(id);
+    return `<article class="word-card${learned ? " learned" : ""}${open ? " revealed" : ""}" data-id="${id}">
+      <div class="card-top">
+        <span class="num">${String(i + 1).padStart(2, "0")}</span>
+        <button type="button" class="speak" data-say="${esc(it[0])}" aria-label="Произношение">${SPEAK_SVG}</button>
+      </div>
+      <div class="en">${esc(it[0])}</div>
+      ${it[1] ? `<div class="ipa">/${esc(it[1])}/</div>` : ""}
+      <div class="answer">
+        <div class="translation">${esc(it[2])}</div>
+        ${it[3] ? `<div class="ex">${esc(it[3])}</div>` : ""}
+      </div>
+      <button type="button" class="reveal-btn">${open ? "Скрыть" : "Показать перевод"}</button>
+      <div class="card-bottom">
+        <button type="button" class="learn-btn${learned ? " on" : ""}">${learned ? "✓ Выучено" : "Отметить выученным"}</button>
+      </div>
+    </article>`;
+  }).join("");
+
+  $("prevDay").disabled = d <= 0;
+  $("nextDay").disabled = d >= maxViewDay();
+  $("daynavLabel").textContent = `День ${d + 1} · ${fmtDate(date)}`;
+}
+
+function renderSidebar() {
+  const learned = totalLearned();
+  const st = streak();
+  $("streakTop").textContent = st;
+  $("streakBig").textContent = st;
+  $("learnedTop").textContent = learned;
+  $("totalTop").textContent = TOTAL;
+  $("wordsDone").textContent = `${learned} / ${TOTAL}`;
+  $("daysDone").textContent = `${doneDays()} / ${COURSE.length}`;
+  $("totalBar").style.width = (learned / TOTAL * 100) + "%";
+
+  const ti = todayIdx();
+  $("heatmap").innerHTML = COURSE.map((_, d) => {
+    const c = learnedCount(d);
+    let cls = "cell";
+    if (d > ti) cls += " future";
+    else if (c === PER_DAY) cls += " done";
+    else if (c > 0) cls += " part";
+    const tip = `День ${d + 1} · ${fmtDate(addDays(state.start, d))} · ${c}/${PER_DAY}`;
+    return `<div class="${cls}" data-day="${d}" title="${esc(tip)}"></div>`;
+  }).join("");
+
+  const due = dueIds().length;
+  $("dueBadge").textContent = due;
+  $("dueBadge").style.display = due ? "inline-flex" : "none";
+}
+
+function renderDict() {
+  const q = $("search").value.trim().toLowerCase();
+  const rows = ALL.filter(w => {
+    if (q && !(w.en.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q))) return false;
+    const p = pOf(w.id);
+    const learned = !!(p && p.learned);
+    if (dictFilter === "learned") return learned;
+    if (dictFilter === "progress") return !learned && !!(p && p.last);
+    if (dictFilter === "new") return !p || !p.last;
+    return true;
+  });
+  if (!rows.length) {
+    $("dictList").innerHTML = '<div class="empty-small">Ничего не найдено</div>';
+    return;
+  }
+  $("dictList").innerHTML = rows.map(w => {
+    const p = pOf(w.id);
+    const learned = !!(p && p.learned);
+    return `<div class="dict-row${learned ? " learned" : ""}">
+      <div class="dict-main">
+        <div class="dw">${esc(w.en)} ${w.ipa ? `<span class="dipa">/${esc(w.ipa)}/</span>` : ""}
+          <button type="button" class="speak small" data-say="${esc(w.en)}" aria-label="Произношение">${SPEAK_SVG}</button>
+        </div>
+        <div class="dru">${esc(w.ru)} ${w.ex ? `<span class="dex">${esc(w.ex)}</span>` : ""}</div>
+      </div>
+      <div class="dict-side">
+        <span class="daytag">День ${w.day + 1}</span>
+        <button type="button" class="learn-btn${learned ? " on" : ""}" data-learn="${w.id}" aria-label="Выучено">${learned ? "✓" : "○"}</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderAll() {
+  renderToday();
+  renderSidebar();
+  if (activeTab === "dictionary") renderDict();
+}
+
+/* ====== КАРТОЧКИ ====== */
+function toggleLearn(id) {
+  const p = ensure(id);
+  p.learned = !p.learned;
+  if (p.learned) {
+    p.last = todayStr();
+    p.box = Math.max(p.box || 0, 2);
+  }
+  saveState();
+  renderToday();
+  renderSidebar();
+  if (activeTab === "dictionary") renderDict();
+}
+
+function startLearn() {
+  const d = Math.min(viewDay, COURSE.length - 1);
+  const ids = [];
+  for (let i = 0; i < PER_DAY; i++) ids.push(d * PER_DAY + i);
+  session = { ids: ids, idx: 0, mode: "learn", revealed: false, mastered: new Set(), initial: ids.length };
+  showTab("review");
+}
+
+function startDayCards() {
+  const d = Math.min(viewDay, COURSE.length - 1);
+  if (!isDayDone(d)) { startLearn(); return; }
+  const current = [];
+  for (let i = 0; i < PER_DAY; i++) current.push(d * PER_DAY + i);
+  // слова текущего урока + слова из прошлых уроков
+  const prev = dueIds().filter(id => Math.floor(id / PER_DAY) !== d).slice(0, 15);
+  const ids = current.concat(prev);
+  session = { ids: ids, idx: 0, mode: "review", revealed: false, mastered: new Set(), initial: ids.length };
+  showTab("review");
+}
+
+function startReview() {
+  const ids = dueIds();
+  session = ids.length
+    ? { ids: ids, idx: 0, mode: "review", revealed: false, mastered: new Set(), initial: ids.length }
+    : null;
+  renderReview();
+}
+
+function lessonLabel(e) {
+  if (!e) return "";
+  const n = e[1], kind = e[2], num = e[3];
+  if (kind === 2) return "Контрольная " + num;
+  if (kind === 1) return "Практика · урок " + n;
+  if (kind === 3) return "Супер-тренажёр";
+  return "Урок " + n;
+}
+
+function lessonKindName(kind) {
+  return ["урок", "практика", "контрольная", "тренажёр"][kind] || "видео";
+}
+
+function lessonWatchUrl(e) {
+  return `https://www.youtube.com/watch?v=${e[0]}&list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X`;
+}
+
+function filteredLessons() {
+  const q = lessonQuery.trim().toLowerCase();
+  const out = [];
+  PLAYLIST.forEach((e, i) => {
+    if (lessonFilter !== "all" && String(e[2]) !== lessonFilter) return;
+    if (q) {
+      const label = lessonLabel(e).toLowerCase();
+      if (!label.includes(q) && !String(e[1]).includes(q)) return;
+    }
+    out.push({ e, i });
+  });
+  return out;
+}
+
+function setVideoPlayer() {
+  const box = $("videoFrame");
+  if (!box) return;
+  const e = PLAYLIST[currentLesson] || PLAYLIST[0];
+  if (!e) return;
+  const isHttp = location.protocol === "http:" || location.protocol === "https:";
+  if (isHttp) {
+    const emb = `https://www.youtube.com/embed/${e[0]}?list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X`;
+    const iframe = box.querySelector("iframe");
+    if (!iframe) {
+      box.innerHTML = `<iframe
+        src="${emb}"
+        title="Плейлист: Английский язык с нуля до автоматизма"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen></iframe>`;
+    } else if (box.dataset.lesson !== String(currentLesson)) {
+      iframe.src = emb;
+    }
+  } else {
+    // YouTube не отдаёт встроенный плеер без HTTP-реферера (ошибка 153),
+    // поэтому при открытии файла напрямую ведём на YouTube.
+    if (box.dataset.lesson !== String(currentLesson) || !box.querySelector(".video-fallback")) {
+      box.innerHTML = `<a class="video-fallback" href="${lessonWatchUrl(e)}" target="_blank" rel="noopener"
+        style="background-image:linear-gradient(180deg,rgba(10,12,20,.15),rgba(10,12,20,.92)),url('https://i.ytimg.com/vi/${e[0]}/hqdefault.jpg')">
+        <span class="video-play" aria-hidden="true">▶</span>
+        <span class="video-fallback-text">
+          <b>${esc(lessonLabel(e))}</b>
+          <small>Открыть видео на YouTube · ${currentLesson + 1} из ${PLAYLIST.length}</small>
+        </span>
+      </a>`;
+    }
+  }
+  box.dataset.lesson = String(currentLesson);
+  const sub = $("videoSubtitle");
+  if (sub) sub.textContent = `${lessonLabel(e)} · ${currentLesson + 1} из ${PLAYLIST.length}`;
+}
+
+function renderLessonList() {
+  const list = $("lessonList");
+  if (!list) return;
+  const rows = filteredLessons();
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty-small">Ничего не найдено</div>';
+    return;
+  }
+  list.innerHTML = rows.map(({ e, i }) => {
+    const active = i === currentLesson ? " active" : "";
+    return `<div class="lesson-item${active}" data-lesson="${i}" role="button" tabindex="0">
+      <span class="lesson-label">${esc(lessonLabel(e))}</span>
+      <span class="lesson-kind">${lessonKindName(e[2])}</span>
+    </div>`;
+  }).join("");
+  const active = list.querySelector(".lesson-item.active");
+  if (active) active.scrollIntoView({ block: "nearest" });
+}
+
+function openLesson(i) {
+  if (i < 0 || i >= PLAYLIST.length) return;
+  currentLesson = i;
+  setVideoPlayer();
+  renderLessonList();
+}
+
+function stepLesson(dir) {
+  const rows = filteredLessons();
+  if (!rows.length) return;
+  let pos = rows.findIndex(r => r.i === currentLesson);
+  if (pos === -1) { openLesson(rows[0].i); return; }
+  pos = Math.max(0, Math.min(rows.length - 1, pos + dir));
+  openLesson(rows[pos].i);
+}
+
+function renderVideo() {
+  setVideoPlayer();
+  renderLessonList();
+}
+
+/* ====== СЛОВА ИЗ ПЛЕЙЛИСТА ====== */
+let nbEditId = null;
+
+function renderNotebook() {
+  const list = $("notebookList");
+  if (!list) return;
+  const q = notebookFilter.trim().toLowerCase();
+  const all = state.customWords || [];
+  const words = all.filter(w => !q || w.en.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q));
+  if (!words.length) {
+    list.innerHTML = `<div class="empty-small">${all.length ? "Ничего не найдено" : "Пока нет слов. Добавьте слово и перевод в форме выше."}</div>`;
+    return;
+  }
+  list.innerHTML = words.map(w => `<div class="dict-row">
+    <div class="dict-main">
+      <div class="dw">${esc(w.en)}
+        <button type="button" class="speak small" data-say="${esc(w.en)}" aria-label="Произношение">${SPEAK_SVG}</button>
+      </div>
+      <div class="dru">${esc(w.ru)}</div>
+    </div>
+    <div class="dict-side">
+      <button type="button" class="btn-soft" data-nb-edit="${w.id}">Изменить</button>
+      <button type="button" class="btn-soft" data-nb-del="${w.id}">Удалить</button>
+    </div>
+  </div>`).join("");
+}
+
+function resetNotebookForm() {
+  nbEditId = null;
+  $("nbEn").value = "";
+  $("nbRu").value = "";
+  $("nbSave").textContent = "Добавить";
+  $("nbCancel").classList.add("hidden");
+}
+
+function saveNotebookWord() {
+  const en = $("nbEn").value.trim();
+  const ru = $("nbRu").value.trim();
+  if (!en || !ru) { $("nbEn").focus(); return; }
+  state.customWords = state.customWords || [];
+  if (nbEditId) {
+    const w = state.customWords.find(x => x.id === nbEditId);
+    if (w) { w.en = en; w.ru = ru; }
+  } else {
+    state.customWords.unshift({ id: "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), en, ru, created: todayStr() });
+  }
+  saveState();
+  resetNotebookForm();
+  renderNotebook();
+  $("nbEn").focus();
+}
+
+function editNotebookWord(id) {
+  const w = (state.customWords || []).find(x => x.id === id);
+  if (!w) return;
+  nbEditId = id;
+  $("nbEn").value = w.en;
+  $("nbRu").value = w.ru;
+  $("nbSave").textContent = "Сохранить";
+  $("nbCancel").classList.remove("hidden");
+  $("nbEn").focus();
+}
+
+function deleteNotebookWord(id) {
+  state.customWords = (state.customWords || []).filter(x => x.id !== id);
+  if (nbEditId === id) resetNotebookForm();
+  saveState();
+  renderNotebook();
+}
+
+function showTab(name) {
+  activeTab = name;
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+  $("tab-" + name).classList.remove("hidden");
+  if (name === "review") {
+    if (!session) startReview(); else renderReview();
+  }
+  if (name === "dictionary") renderDict();
+  if (name === "video") renderVideo();
+  if (name === "notebook") renderNotebook();
+  if (name === "today") { renderToday(); renderSidebar(); }
+}
+
+function renderReview() {
+  const wrap = $("reviewWrap");
+  if (!session) {
+    wrap.innerHTML = `<div class="empty">
+      <div class="empty-emoji">🎉</div>
+      <h2>На сегодня повторений нет</h2>
+      <p>Все слова под контролем. Загляните в словарь, чтобы повторить что-то вручную.</p>
+      <div class="row"><button type="button" class="btn-soft" data-act="today">К сегодняшним словам</button></div>
+    </div>`;
+    return;
+  }
+  if (session.idx >= session.ids.length) {
+    const n = session.mastered.size;
+    wrap.innerHTML = `<div class="empty">
+      <div class="empty-emoji">✅</div>
+      <h2>${session.mode === "learn" ? "Набор пройден!" : "Повторение готово!"}</h2>
+      <p>${session.mode === "learn" ? "Выучили" : "Вспомнили"} ${n} ${plural(n, "слово", "слова", "слов")} из ${session.initial}.</p>
+      <div class="row">
+        <button type="button" class="btn-know" data-act="restart">Ещё подход</button>
+        <button type="button" class="btn-soft" data-act="today">К словам дня</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const id = session.ids[session.idx];
+  const w = BY_ID.get(id);
+  const isLearn = session.mode === "learn";
+  const pct = session.initial ? Math.round(session.mastered.size / session.initial * 100) : 0;
+  const left = session.ids.length - session.idx;
+  wrap.innerHTML = `
+    <div class="review-head"><span>${isLearn ? "Новые слова" : `Повторение · день ${w.day + 1}`}</span><span>Осталось: ${left}</span></div>
+    <div class="review-bar"><i style="width:${pct}%"></i></div>
+    <div class="flashcard">
+      <div class="flash-word">${esc(w.en)}
+        <button type="button" class="speak" data-say="${esc(w.en)}" aria-label="Произношение">${SPEAK_SVG}</button>
+      </div>
+      ${w.ipa ? `<div class="flash-ipa">/${esc(w.ipa)}/</div>` : ""}
+      ${session.revealed ? `
+        <div class="flash-answer">
+          <div class="flash-ru">${esc(w.ru)}</div>
+          ${w.ex ? `<div class="flash-ex">${esc(w.ex)}</div>` : ""}
+        </div>
+        <div class="flash-actions">
+          <button type="button" class="btn-again" data-act="again">${isLearn ? "Ещё раз" : "Забыл"}</button>
+          <button type="button" class="btn-know" data-act="know">${isLearn ? "Выучил" : "Помню"}</button>
+        </div>` : `
+        <div class="flash-actions">
+          <button type="button" class="btn-know reveal-main" data-act="reveal">Показать перевод</button>
+        </div>`}
+    </div>
+    <div class="kbd-hint">Пробел — перевод · Enter — знаю · ← — ещё раз</div>`;
+}
+
+function answer(know) {
+  if (!session || session.idx >= session.ids.length) return;
+  const id = session.ids[session.idx];
+  const p = ensure(id);
+  p.last = todayStr();
+  p.seen = (p.seen || 0) + 1;
+  if (know) {
+    p.box = Math.min((p.box || 0) + 1, 6);
+    if (session.mode === "learn") p.learned = true;
+    else if (p.box >= 4) p.learned = true;
+    session.mastered.add(id);
+  } else {
+    p.box = 0;
+    session.ids.push(id);
+  }
+  saveState();
+  session.idx++;
+  session.revealed = false;
+  renderReview();
+  renderSidebar();
+}
+
+/* ====== СОБЫТИЯ ====== */
+document.querySelectorAll(".tabs button").forEach(b => {
+  b.addEventListener("click", () => {
+    if (b.dataset.tab === "review") session = null;
+    showTab(b.dataset.tab);
+  });
+});
+
+$("wordList").addEventListener("click", e => {
+  const say = e.target.closest("[data-say]");
+  if (say) { speak(say.dataset.say); return; }
+  const learnBtn = e.target.closest(".learn-btn");
+  if (learnBtn) {
+    const card = learnBtn.closest(".word-card");
+    if (card) toggleLearn(+card.dataset.id);
+    return;
+  }
+  const card = e.target.closest(".word-card");
+  if (!card) return;
+  const id = +card.dataset.id;
+  if (revealAll) { revealAll = false; revealed = new Set([id]); }
+  else if (revealed.has(id)) revealed.delete(id);
+  else revealed.add(id);
+  renderToday();
+});
+
+$("revealAll").addEventListener("click", () => { revealAll = !revealAll; renderToday(); });
+$("startCards").addEventListener("click", startDayCards);
+$("prevDay").addEventListener("click", () => {
+  if (viewDay > 0) { viewDay--; revealed.clear(); revealAll = false; renderToday(); }
+});
+$("nextDay").addEventListener("click", () => {
+  if (viewDay < maxViewDay()) { viewDay++; revealed.clear(); revealAll = false; renderToday(); }
+});
+
+$("reviewWrap").addEventListener("click", e => {
+  const say = e.target.closest("[data-say]");
+  if (say) { speak(say.dataset.say); return; }
+  const btn = e.target.closest("[data-act]");
+  if (!btn) return;
+  const act = btn.dataset.act;
+  if (act === "reveal") { session.revealed = true; renderReview(); }
+  else if (act === "know") answer(true);
+  else if (act === "again") answer(false);
+  else if (act === "restart") { if (session && session.mode === "learn") startLearn(); else startReview(); }
+  else if (act === "today") { session = null; showTab("today"); }
+});
+
+$("search").addEventListener("input", renderDict);
+$("filters").addEventListener("click", e => {
+  const b = e.target.closest("[data-f]");
+  if (!b) return;
+  dictFilter = b.dataset.f;
+  document.querySelectorAll("#filters button").forEach(x => x.classList.toggle("active", x === b));
+  renderDict();
+});
+$("dictList").addEventListener("click", e => {
+  const say = e.target.closest("[data-say]");
+  if (say) { speak(say.dataset.say); return; }
+  const b = e.target.closest("[data-learn]");
+  if (b) toggleLearn(+b.dataset.learn);
+});
+
+/* ----- видео: навигация по урокам ----- */
+$("lessonSearch").addEventListener("input", e => {
+  lessonQuery = e.target.value;
+  renderLessonList();
+});
+$("lessonFilters").addEventListener("click", e => {
+  const b = e.target.closest("[data-kind]");
+  if (!b) return;
+  lessonFilter = b.dataset.kind;
+  document.querySelectorAll("#lessonFilters button").forEach(x => x.classList.toggle("active", x === b));
+  renderLessonList();
+});
+$("lessonList").addEventListener("click", e => {
+  const item = e.target.closest("[data-lesson]");
+  if (item) openLesson(+item.dataset.lesson);
+});
+$("prevLesson").addEventListener("click", () => stepLesson(-1));
+$("nextLesson").addEventListener("click", () => stepLesson(1));
+
+/* ----- слова из плейлиста ----- */
+$("notebookSearch").addEventListener("input", e => {
+  notebookFilter = e.target.value;
+  renderNotebook();
+});
+$("nbSave").addEventListener("click", saveNotebookWord);
+$("nbCancel").addEventListener("click", () => { resetNotebookForm(); renderNotebook(); });
+$("nbEn").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("nbRu").focus(); } });
+$("nbRu").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); saveNotebookWord(); } });
+$("notebookList").addEventListener("click", e => {
+  const say = e.target.closest("[data-say]");
+  if (say) { speak(say.dataset.say); return; }
+  const del = e.target.closest("[data-nb-del]");
+  if (del) { deleteNotebookWord(del.dataset.nbDel); return; }
+  const ed = e.target.closest("[data-nb-edit]");
+  if (ed) editNotebookWord(ed.dataset.nbEdit);
+});
+
+$("heatmap").addEventListener("click", e => {
+  const cell = e.target.closest("[data-day]");
+  if (!cell) return;
+  const d = +cell.dataset.day;
+  if (d > todayIdx()) return;
+  viewDay = d;
+  revealed.clear();
+  revealAll = false;
+  showTab("today");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+$("resetBtn").addEventListener("click", () => {
+  if (!confirm("Сбросить весь прогресс и начать курс заново?")) return;
+  state = { start: todayStr(), prog: {}, customWords: state.customWords || [] };
+  saveState();
+  viewDay = 0;
+  revealed.clear();
+  revealAll = false;
+  session = null;
+  showTab("today");
+  renderAll();
+});
+
+document.addEventListener("keydown", e => {
+  if (activeTab !== "review" || !session) return;
+  if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (session.idx >= session.ids.length) return;
+  if (e.code === "Space") {
+    e.preventDefault();
+    if (!session.revealed) { session.revealed = true; renderReview(); }
+  } else if (e.code === "Enter" || e.code === "ArrowRight") {
+    if (session.revealed) { e.preventDefault(); answer(true); }
+  } else if (e.code === "ArrowLeft" || e.code === "Backspace") {
+    if (session.revealed) { e.preventDefault(); answer(false); }
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return;
+  if (todayStr() !== lastToday) {
+    lastToday = todayStr();
+    viewDay = Math.min(todayIdx(), COURSE.length - 1);
+    session = null;
+    renderAll();
+  }
+});
+
+/* ====== СТАРТ ====== */
+renderAll();
+showTab("today");
+
+</script>
+</body>
+</html>
+
