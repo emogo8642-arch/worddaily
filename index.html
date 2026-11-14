@@ -250,7 +250,12 @@ body{
 .video-head p{margin:0;color:var(--muted);font-size:13.5px}
 .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 24px 60px -34px rgba(16,24,40,.55);margin-bottom:18px}
 .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-frame:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;margin:0;border:0;border-radius:0;background:#000}
+.video-frame:-webkit-full-screen{width:100vw;height:100vh;aspect-ratio:auto;margin:0;border:0;border-radius:0;background:#000}
 .video-head .btn-soft{text-decoration:none;display:inline-flex;align-items:center}
+.video-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 18px}
+.video-actions .btn-soft{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.video-hint{font-size:12.5px;color:var(--muted)}
 .video-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;text-decoration:none;color:#fff;background:linear-gradient(180deg,rgba(10,12,20,.2),rgba(10,12,20,.9)),url("https://i.ytimg.com/vi/Hp9wUEDasY4/hqdefault.jpg") center/cover no-repeat}
 .video-play{width:64px;height:64px;border-radius:50%;background:#ff0033;display:grid;place-items:center;font-size:22px;padding-left:4px;box-shadow:0 12px 30px rgba(255,0,51,.35)}
 .video-fallback-text{display:flex;flex-direction:column;gap:4px}
@@ -271,7 +276,10 @@ body{
   .video-head{margin-bottom:12px}
   .video-head h2{font-size:20px}
   .video-head .btn-soft{width:100%;justify-content:center}
-  .video-frame{border-radius:14px;margin-bottom:12px}
+  .video-frame{width:calc(100% + 40px);margin-left:-20px;margin-right:-20px;border-left:0;border-right:0;border-radius:0;margin-bottom:12px}
+  .video-actions{margin:-2px 0 12px}
+  .video-actions .btn-soft{width:100%}
+  .video-hint{font-size:12px}
   .video-nav{padding:12px;border-radius:16px}
   .video-nav-top{gap:10px;margin-bottom:10px}
   .lesson-list{max-height:70vh;margin:0 -12px;padding:0 12px}
@@ -383,6 +391,11 @@ footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
         <a class="btn-soft" href="https://www.youtube.com/playlist?list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X" target="_blank" rel="noopener">Открыть на YouTube</a>
       </div>
       <div class="video-frame" id="videoFrame"></div>
+      <div class="video-actions">
+        <button type="button" class="btn-soft" id="videoFull">⛶ На весь экран</button>
+        <a class="btn-soft" id="videoDirect" href="https://www.youtube.com/playlist?list=PLD6SPjEPomaustGSgYNsn3V62BTQeH85X" target="_blank" rel="noopener">▶ Смотреть на YouTube</a>
+        <span class="video-hint">Если встроенный плеер не загружается — откройте видео на YouTube.</span>
+      </div>
       <div class="video-nav">
         <div class="video-nav-top">
           <input id="lessonSearch" type="search" placeholder="Искать урок по номеру или названию…" autocomplete="off">
@@ -2005,6 +2018,8 @@ function setVideoPlayer() {
   box.dataset.lesson = String(currentLesson);
   const sub = $("videoSubtitle");
   if (sub) sub.textContent = `${lessonLabel(e)} · ${currentLesson + 1} из ${PLAYLIST.length}`;
+  const direct = $("videoDirect");
+  if (direct) direct.href = lessonWatchUrl(e);
 }
 
 function fmtWhen(iso) {
@@ -2334,6 +2349,16 @@ $("lessonFilters").addEventListener("click", e => {
 $("lessonList").addEventListener("click", e => {
   const item = e.target.closest("[data-lesson]");
   if (item) openLesson(+item.dataset.lesson);
+});
+$("videoFull").addEventListener("click", () => {
+  const box = $("videoFrame");
+  const req = box.requestFullscreen || box.webkitRequestFullscreen || box.msRequestFullscreen;
+  if (req) {
+    try { req.call(box); } catch (e) {}
+  } else {
+    const e = PLAYLIST[currentLesson];
+    if (e) window.open(lessonWatchUrl(e), "_blank", "noopener");
+  }
 });
 $("prevLesson").addEventListener("click", () => stepLesson(-1));
 $("nextLesson").addEventListener("click", () => stepLesson(1));
