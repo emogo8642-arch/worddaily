@@ -93,6 +93,7 @@ body{
 .hero .bar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
 .hero-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
 .btn{border:0;border-radius:11px;padding:10px 17px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:.18s}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
 .btn-light{background:#fff;color:#4f46e5;box-shadow:0 8px 20px -8px rgba(0,0,0,.4)}
 .btn-light:hover{transform:translateY(-1px)}
 .btn-ghost-light{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35)}
@@ -156,6 +157,7 @@ body{
 .cell.done{background:var(--green);border-color:transparent}
 .cell.future{opacity:.35;cursor:default}
 .cell.future:hover{transform:none}
+.cell.locked{background:repeating-linear-gradient(135deg,var(--surface2),var(--surface2) 4px,var(--accent-soft) 4px,var(--accent-soft) 8px);opacity:.75}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:12px}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .dot{width:9px;height:9px;border-radius:3px;background:var(--surface2);border:1px solid var(--line);display:inline-block}
@@ -206,12 +208,12 @@ body{
 
 /* ---------- dictionary ---------- */
 .dict-tools{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-#search,#notebookSearch{
+#search,#notebookSearch,#lessonSearch{
   width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);
   color:var(--text);font:inherit;font-size:15px;outline:none;transition:.18s;box-shadow:var(--shadow);
 }
-#search:focus,#notebookSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-#search::placeholder,#notebookSearch::placeholder{color:var(--muted)}
+#search:focus,#notebookSearch:focus,#lessonSearch:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+#search::placeholder,#notebookSearch::placeholder,#lessonSearch::placeholder{color:var(--muted)}
 .nb-form{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .nb-form input{
   flex:1 1 180px;min-width:0;padding:12px 14px;border-radius:12px;border:1px solid var(--line);
@@ -256,15 +258,44 @@ body{
 .video-fallback-text small{color:rgba(255,255,255,.75);font-size:13px}
 .video-nav{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
 .video-nav-top{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
-.lesson-list{max-height:400px;overflow-y:auto;margin:0 -16px;padding:0 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lesson-list{max-height:480px;overflow-y:auto;margin:0 -16px;padding:0 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overscroll-behavior:contain}
 .lesson-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
 .lesson-item:last-child{border-bottom:0}
 .lesson-item:hover{background:var(--surface2);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
 .lesson-item.active{background:linear-gradient(90deg,var(--accent-soft),transparent 60%)}
 .lesson-label{font-size:14px;font-weight:700;min-width:0}
 .lesson-kind{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap;flex:none}
+.lesson-item .watched-dot{color:var(--green);font-weight:800;margin-right:6px}
 .video-nav-footer{display:flex;gap:10px;margin-top:14px;justify-content:space-between}
-@media (max-width:700px){.video-nav-footer{flex-direction:column}}
+@media (max-width:700px){
+  .video-head{margin-bottom:12px}
+  .video-head h2{font-size:20px}
+  .video-head .btn-soft{width:100%;justify-content:center}
+  .video-frame{border-radius:14px;margin-bottom:12px}
+  .video-nav{padding:12px;border-radius:16px}
+  .video-nav-top{gap:10px;margin-bottom:10px}
+  .lesson-list{max-height:70vh;margin:0 -12px;padding:0 12px}
+  .lesson-item{padding:14px 0}
+  .lesson-label{font-size:15px}
+  .lesson-kind{font-size:11.5px;padding:4px 9px}
+  .video-nav-footer{flex-direction:column;margin-top:12px}
+  .video-nav-footer .btn{width:100%}
+  .watch-history{padding:14px;margin-top:14px}
+}
+.watch-history{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.watch-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.watch-head h3{margin:0;font-size:15px;letter-spacing:-.01em}
+.watch-list{display:flex;flex-direction:column}
+.watch-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
+.watch-item:last-child{border-bottom:0}
+.watch-item:hover{background:var(--surface2);margin:0 -10px;padding-left:10px;padding-right:10px;border-radius:8px}
+.watch-item-main{min-width:0}
+.watch-item-label{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.watch-item-when{font-size:12px;color:var(--muted);margin-top:2px}
+.watch-item-kind{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap;flex:none}
+@media (max-width:560px){.watch-item-kind{display:none}}
+
+
 
 footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
 </style>
@@ -368,6 +399,13 @@ footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
           <button type="button" class="btn btn-ghost-light" id="nextLesson">След. урок →</button>
         </div>
       </div>
+      <div class="watch-history">
+        <div class="watch-head">
+          <h3>История просмотров</h3>
+          <button type="button" class="btn-soft hidden" id="clearHistory">Очистить</button>
+        </div>
+        <div id="watchList" class="watch-list"></div>
+      </div>
     </section>
 
     <section id="tab-notebook" class="tab-panel hidden">
@@ -399,6 +437,7 @@ footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
 
   <footer>Прогресс хранится локально в браузере · WordDaily</footer>
 </div>
+
 <script>
 "use strict";
 
@@ -1566,7 +1605,6 @@ const PLAYLIST = [["Hp9wUEDasY4",1,0,0],["jMCOyUgKhqU",1,1,0],["nXI9CN5a6ew",2,0
 const INTERVALS = [1, 3, 7, 14, 30, 60];
 const KEY = "worddaily.v1";
 const $ = (id) => document.getElementById(id);
-
 function dstr(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -1599,11 +1637,23 @@ function loadState() {
       if (s && typeof s.start === "string") {
         s.prog = s.prog || {};
         if (!Array.isArray(s.customWords)) s.customWords = [];
+        if (!s.activity || typeof s.activity !== "object") s.activity = {};
+        if (!Array.isArray(s.videoHistory)) s.videoHistory = [];
+        // миграция старого прогресса: восстанавливаем активность по датам last
+        if (Object.keys(s.activity).length === 0) {
+          for (const k in s.prog) {
+            const p = s.prog[k];
+            if (!p || !p.last) continue;
+            if (!Array.isArray(s.activity[p.last])) s.activity[p.last] = [];
+            const id = +k;
+            if (!s.activity[p.last].includes(id)) s.activity[p.last].push(id);
+          }
+        }
         return s;
       }
     }
   } catch (e) {}
-  return { start: todayStr(), prog: {}, customWords: [] };
+  return { start: todayStr(), prog: {}, customWords: [], activity: {}, videoHistory: [] };
 }
 function saveState() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
@@ -1648,7 +1698,16 @@ function doneDays() {
   for (let d = 0; d < COURSE.length; d++) if (isDayDone(d)) n++;
   return n;
 }
+function markActivity(id) {
+  const t = todayStr();
+  if (!state.activity || typeof state.activity !== "object") state.activity = {};
+  if (!Array.isArray(state.activity[t])) state.activity[t] = [];
+  if (!state.activity[t].includes(id)) state.activity[t].push(id);
+}
 function activityOn(date) {
+  const a = state.activity && state.activity[date];
+  if (Array.isArray(a)) return a.length;
+  // запасной вариант для старых данных: считаем по дате последнего повторения
   let n = 0;
   for (const w of ALL) {
     const p = state.prog[w.id];
@@ -1732,6 +1791,10 @@ function renderToday() {
   $("heroKicker").textContent = `День ${d + 1} из ${COURSE.length}`;
   $("heroTitle").textContent = COURSE[d].theme;
   $("heroDate").textContent = fmtDate(date, { weekday: "long", day: "numeric", month: "long" });
+
+  $("startCards").disabled = false;
+  $("revealAll").disabled = false;
+
   $("heroCount").textContent = `${n} / ${PER_DAY}`;
   $("heroBar").style.width = (n / PER_DAY * 100) + "%";
   $("startCards").textContent = n === PER_DAY ? "Повторить карточки" : "Учить карточками";
@@ -1829,6 +1892,7 @@ function renderAll() {
   renderToday();
   renderSidebar();
   if (activeTab === "dictionary") renderDict();
+  if (activeTab === "notebook") renderNotebook();
 }
 
 /* ====== КАРТОЧКИ ====== */
@@ -1838,6 +1902,7 @@ function toggleLearn(id) {
   if (p.learned) {
     p.last = todayStr();
     p.box = Math.max(p.box || 0, 2);
+    markActivity(id);
   }
   saveState();
   renderToday();
@@ -1942,6 +2007,48 @@ function setVideoPlayer() {
   if (sub) sub.textContent = `${lessonLabel(e)} · ${currentLesson + 1} из ${PLAYLIST.length}`;
 }
 
+function fmtWhen(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const day = dstr(d);
+  const time = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(d);
+  const t = todayStr();
+  if (day === t) return "сегодня, " + time;
+  if (day === addDays(t, -1)) return "вчера, " + time;
+  return fmtDate(day) + ", " + time;
+}
+
+function recordLessonView(i) {
+  if (!PLAYLIST[i]) return;
+  if (!Array.isArray(state.videoHistory)) state.videoHistory = [];
+  state.videoHistory = state.videoHistory.filter(h => h.i !== i);
+  state.videoHistory.unshift({ i, at: new Date().toISOString() });
+  if (state.videoHistory.length > 30) state.videoHistory.length = 30;
+  saveState();
+}
+
+function renderWatchHistory() {
+  const list = $("watchList");
+  const clear = $("clearHistory");
+  if (!list) return;
+  const hist = (state.videoHistory || []).filter(h => PLAYLIST[h.i]);
+  if (clear) clear.classList.toggle("hidden", !hist.length);
+  if (!hist.length) {
+    list.innerHTML = '<div class="empty-small">Здесь появятся уроки, которые вы открывали.</div>';
+    return;
+  }
+  list.innerHTML = hist.slice(0, 12).map(h => {
+    const e = PLAYLIST[h.i];
+    return `<div class="watch-item" data-watch="${h.i}" role="button" tabindex="0">
+      <div class="watch-item-main">
+        <div class="watch-item-label">▶ ${esc(lessonLabel(e))}</div>
+        <div class="watch-item-when">${esc(fmtWhen(h.at))}</div>
+      </div>
+      <span class="watch-item-kind">${lessonKindName(e[2])}</span>
+    </div>`;
+  }).join("");
+}
+
 function renderLessonList() {
   const list = $("lessonList");
   if (!list) return;
@@ -1950,10 +2057,12 @@ function renderLessonList() {
     list.innerHTML = '<div class="empty-small">Ничего не найдено</div>';
     return;
   }
+  const watched = new Set((state.videoHistory || []).map(h => h.i));
   list.innerHTML = rows.map(({ e, i }) => {
     const active = i === currentLesson ? " active" : "";
+    const mark = watched.has(i) ? '<span class="watched-dot">✓</span>' : "";
     return `<div class="lesson-item${active}" data-lesson="${i}" role="button" tabindex="0">
-      <span class="lesson-label">${esc(lessonLabel(e))}</span>
+      <span class="lesson-label">${mark}${esc(lessonLabel(e))}</span>
       <span class="lesson-kind">${lessonKindName(e[2])}</span>
     </div>`;
   }).join("");
@@ -1964,8 +2073,10 @@ function renderLessonList() {
 function openLesson(i) {
   if (i < 0 || i >= PLAYLIST.length) return;
   currentLesson = i;
+  recordLessonView(i);
   setVideoPlayer();
   renderLessonList();
+  renderWatchHistory();
 }
 
 function stepLesson(dir) {
@@ -1980,6 +2091,7 @@ function stepLesson(dir) {
 function renderVideo() {
   setVideoPlayer();
   renderLessonList();
+  renderWatchHistory();
 }
 
 /* ====== СЛОВА ИЗ ПЛЕЙЛИСТА ====== */
@@ -1988,6 +2100,8 @@ let nbEditId = null;
 function renderNotebook() {
   const list = $("notebookList");
   if (!list) return;
+  const tools = document.querySelector("#tab-notebook .dict-tools");
+  if (tools) tools.classList.remove("hidden");
   const q = notebookFilter.trim().toLowerCase();
   const all = state.customWords || [];
   const words = all.filter(w => !q || w.en.toLowerCase().includes(q) || w.ru.toLowerCase().includes(q));
@@ -2125,6 +2239,7 @@ function answer(know) {
   const p = ensure(id);
   p.last = todayStr();
   p.seen = (p.seen || 0) + 1;
+  markActivity(id);
   if (know) {
     p.box = Math.min((p.box || 0) + 1, 6);
     if (session.mode === "learn") p.learned = true;
@@ -2222,6 +2337,16 @@ $("lessonList").addEventListener("click", e => {
 });
 $("prevLesson").addEventListener("click", () => stepLesson(-1));
 $("nextLesson").addEventListener("click", () => stepLesson(1));
+$("watchList").addEventListener("click", e => {
+  const item = e.target.closest("[data-watch]");
+  if (item) openLesson(+item.dataset.watch);
+});
+$("clearHistory").addEventListener("click", () => {
+  state.videoHistory = [];
+  saveState();
+  renderWatchHistory();
+  renderLessonList();
+});
 
 /* ----- слова из плейлиста ----- */
 $("notebookSearch").addEventListener("input", e => {
@@ -2255,7 +2380,7 @@ $("heatmap").addEventListener("click", e => {
 
 $("resetBtn").addEventListener("click", () => {
   if (!confirm("Сбросить весь прогресс и начать курс заново?")) return;
-  state = { start: todayStr(), prog: {}, customWords: state.customWords || [] };
+  state = { start: todayStr(), prog: {}, customWords: state.customWords || [], activity: {}, videoHistory: state.videoHistory || [] };
   saveState();
   viewDay = 0;
   revealed.clear();
