@@ -47,6 +47,9 @@ body{
   border-radius:999px;padding:8px 13px;font-size:12.5px;color:var(--muted);box-shadow:var(--shadow);white-space:nowrap;
 }
 .pill b{color:var(--text);font-size:13px}
+.pill-sync{font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:.18s}
+.pill-sync:hover{color:var(--accent);border-color:var(--accent)}
+@media (max-width:560px){.pill-sync b{display:none}}
 
 /* ---------- tabs ---------- */
 .tabs{
@@ -305,6 +308,32 @@ body{
 
 
 
+/* ---------- modal / sync ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,12,20,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:22px;width:100%;max-width:520px;max-height:calc(100vh - 36px);overflow-y:auto;box-shadow:0 40px 90px -30px rgba(0,0,0,.55);position:relative}
+.modal-head{padding:24px 24px 0;position:relative}
+.modal-head h2{margin:0 0 6px;font-size:22px;letter-spacing:-.025em}
+.modal-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface2);color:var(--muted);font-size:17px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text);border-color:var(--accent)}
+.modal-body{padding:18px 24px 24px}
+.sync-step b{display:block;font-size:13px;margin-bottom:6px}
+.sync-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.sync-code{width:100%;min-height:76px;max-height:150px;resize:vertical;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;word-break:break-all;outline:none}
+.sync-code:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.sync-sep{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:11.5px;margin:16px 0 12px}
+.sync-sep::before,.sync-sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.sync-msg{font-size:12.5px;margin:10px 0 0;min-height:16px}
+.sync-msg.err{color:var(--danger)}
+.sync-msg.ok{color:var(--green)}
+.sync-file{display:inline-flex;align-items:center;cursor:pointer}
+@media (max-width:560px){
+  .modal-backdrop{padding:10px}
+  .modal-head{padding:20px 18px 0}
+  .modal-body{padding:16px 18px 20px}
+  .sync-actions .btn-soft,.sync-actions .btn{flex:1 1 140px;justify-content:center;text-align:center}
+}
+
 footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
 </style>
 </head>
@@ -321,6 +350,7 @@ footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
     <div class="topstats">
       <div class="pill">🔥 <b id="streakTop">0</b></div>
       <div class="pill">Выучено <b id="learnedTop">0</b>/<span id="totalTop">300</span></div>
+      <button type="button" class="pill pill-sync" id="syncPill" title="Синхронизация прогресса" aria-label="Синхронизация прогресса">🔄 <b>Синхронизация</b></button>
     </div>
   </header>
 
@@ -449,6 +479,37 @@ footer{margin-top:44px;text-align:center;font-size:12px;color:var(--muted)}
   </main>
 
   <footer>Прогресс хранится локально в браузере · WordDaily</footer>
+</div>
+
+<div class="modal-backdrop hidden" id="syncModal" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <button type="button" class="modal-close" id="syncClose" aria-label="Закрыть">✕</button>
+      <h2 id="syncTitle">Синхронизация прогресса</h2>
+      <p>Один прогресс на телефоне и компьютере. Данные никуда не отправляются — вы переносите их сами.</p>
+    </div>
+    <div class="modal-body">
+      <div class="sync-step">
+        <b>1. Отправьте прогресс с этого устройства</b>
+        <div class="sync-actions">
+          <button type="button" class="btn-soft" id="syncCopy">Скопировать код</button>
+          <button type="button" class="btn-soft" id="syncLink">Ссылка для телефона</button>
+          <button type="button" class="btn-soft" id="syncDownload">Скачать файл</button>
+        </div>
+        <textarea id="syncCode" class="sync-code" readonly spellcheck="false" placeholder="Код появится здесь"></textarea>
+      </div>
+      <div class="sync-sep">или</div>
+      <div class="sync-step">
+        <b>2. Загрузите прогресс на другом устройстве</b>
+        <textarea id="syncInput" class="sync-code" spellcheck="false" placeholder="Вставьте сюда код с другого устройства"></textarea>
+        <div class="sync-actions">
+          <button type="button" class="btn btn-light" id="syncApply">Применить код</button>
+          <label class="btn-soft sync-file">Загрузить файл<input type="file" id="syncFile" accept=".json,application/json" hidden></label>
+        </div>
+      </div>
+      <p class="sync-msg" id="syncMsg"></p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1672,6 +1733,98 @@ function saveState() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
 }
 
+/* ====== СИНХРОНИЗАЦИЯ ПРОГРЕССА ====== */
+function toB64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(bin);
+}
+function fromB64(str) {
+  const bin = atob(str);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function syncCodeFromState() {
+  return toB64(JSON.stringify(state));
+}
+function mergeRemote(remote) {
+  if (!remote || typeof remote !== "object" || typeof remote.start !== "string" || !remote.prog) {
+    throw new Error("Это не код WordDaily");
+  }
+  if (remote.start < state.start) state.start = remote.start;
+
+  const rp = remote.prog || {};
+  for (const k in rp) {
+    const b = rp[k];
+    if (!b) continue;
+    const a = state.prog[k];
+    if (!a) {
+      state.prog[k] = { learned: !!b.learned, box: b.box || 0, last: b.last || null, seen: b.seen || 0 };
+      continue;
+    }
+    a.learned = !!(a.learned || b.learned);
+    a.box = Math.max(a.box || 0, b.box || 0);
+    a.seen = Math.max(a.seen || 0, b.seen || 0);
+    if (b.last && (!a.last || b.last > a.last)) a.last = b.last;
+  }
+
+  const ra = remote.activity || {};
+  if (!state.activity || typeof state.activity !== "object") state.activity = {};
+  for (const d in ra) {
+    if (!Array.isArray(ra[d])) continue;
+    const arr = state.activity[d] || (state.activity[d] = []);
+    ra[d].forEach(id => { if (typeof id === "number" && !arr.includes(id)) arr.push(id); });
+  }
+
+  const nbKey = w => String(w.en || "").trim().toLowerCase() + "|" + String(w.ru || "").trim().toLowerCase();
+  const rw = Array.isArray(remote.customWords) ? remote.customWords : [];
+  const known = new Set(state.customWords.map(nbKey));
+  rw.forEach(w => {
+    if (!w || !w.en) return;
+    const k = nbKey(w);
+    if (known.has(k)) return;
+    state.customWords.push({
+      id: w.id || ("w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)),
+      en: String(w.en),
+      ru: String(w.ru || ""),
+      created: w.created || todayStr()
+    });
+    known.add(k);
+  });
+
+  const rh = Array.isArray(remote.videoHistory) ? remote.videoHistory : [];
+  rh.forEach(h => {
+    if (!h || typeof h.i !== "number") return;
+    const ex = state.videoHistory.find(x => x.i === h.i);
+    if (!ex) state.videoHistory.push({ i: h.i, at: h.at || new Date().toISOString() });
+    else if (h.at && (!ex.at || h.at > ex.at)) ex.at = h.at;
+  });
+  state.videoHistory.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  state.videoHistory = state.videoHistory.slice(0, 30);
+}
+function applySyncText(text) {
+  let raw = String(text || "").trim();
+  if (!raw) throw new Error("Вставьте код или загрузите файл");
+  const m = raw.match(/#sync=([^&\s]+)/);
+  if (m) raw = decodeURIComponent(m[1]);
+  let json;
+  if (raw.charAt(0) === "{") json = raw;
+  else {
+    try { json = fromB64(raw.replace(/\s+/g, "")); }
+    catch (e) { throw new Error("Код повреждён или скопирован не полностью"); }
+  }
+  let remote;
+  try { remote = JSON.parse(json); }
+  catch (e) { throw new Error("Код повреждён или скопирован не полностью"); }
+  mergeRemote(remote);
+  saveState();
+  renderAll();
+}
+
 function todayIdx() { return Math.max(0, diffDays(state.start, todayStr())); }
 function maxViewDay() { return Math.min(todayIdx(), COURSE.length - 1); }
 
@@ -2439,9 +2592,111 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+/* ----- синхронизация ----- */
+function openSync() {
+  const m = $("syncModal");
+  if (!m) return;
+  m.classList.remove("hidden");
+  $("syncCode").value = syncCodeFromState();
+  $("syncInput").value = "";
+  $("syncMsg").textContent = "";
+  $("syncMsg").className = "sync-msg";
+}
+function closeSync() { $("syncModal").classList.add("hidden"); }
+function syncMsg(text, ok) {
+  const el = $("syncMsg");
+  el.textContent = text;
+  el.className = "sync-msg " + (ok ? "ok" : "err");
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;left:-9999px;top:0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  ta.remove();
+  return ok;
+}
+$("syncPill").addEventListener("click", openSync);
+$("syncClose").addEventListener("click", closeSync);
+$("syncModal").addEventListener("click", e => { if (e.target === $("syncModal")) closeSync(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("syncModal").classList.contains("hidden")) closeSync();
+});
+$("syncCopy").addEventListener("click", async () => {
+  const code = $("syncCode").value || syncCodeFromState();
+  const ok = await copyText(code);
+  syncMsg(ok ? "Код скопирован. Отправьте его на другое устройство." : "Не удалось скопировать. Выделите код вручную.", ok);
+});
+$("syncLink").addEventListener("click", async () => {
+  if (location.protocol === "file:") {
+    syncMsg("Ссылка работает только на сайте. Используйте код или файл.", false);
+    return;
+  }
+  const link = location.origin + location.pathname + "#sync=" + encodeURIComponent(syncCodeFromState());
+  if (link.length > 60000) {
+    syncMsg("Код слишком большой для ссылки — используйте «Скачать файл».", false);
+    return;
+  }
+  const ok = await copyText(link);
+  syncMsg(ok ? "Ссылка скопирована. Откройте её на телефоне — прогресс загрузится сам." : "Не удалось скопировать ссылку.", ok);
+});
+$("syncDownload").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "worddaily-progress-" + todayStr() + ".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  syncMsg("Файл сохранён. Загрузите его на другом устройстве.", true);
+});
+$("syncApply").addEventListener("click", () => {
+  try {
+    applySyncText($("syncInput").value);
+    $("syncCode").value = syncCodeFromState();
+    $("syncInput").value = "";
+    syncMsg("Готово! Прогресс объединён с текущим.", true);
+  } catch (e) {
+    syncMsg(e.message || "Не удалось применить код.", false);
+  }
+});
+$("syncFile").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      applySyncText(String(r.result));
+      $("syncCode").value = syncCodeFromState();
+      syncMsg("Файл загружен. Прогресс объединён.", true);
+    } catch (err) {
+      syncMsg(err.message || "Не удалось прочитать файл.", false);
+    }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+});
+function importSyncFromHash() {
+  const m = (location.hash || "").match(/^#sync=(.+)$/);
+  if (!m) return;
+  try {
+    applySyncText(decodeURIComponent(m[1]));
+    history.replaceState(null, "", location.pathname + location.search);
+    alert("Прогресс синхронизирован с другого устройства.");
+  } catch (e) {
+    alert("Не удалось загрузить прогресс из ссылки.");
+  }
+}
+
 /* ====== СТАРТ ====== */
 renderAll();
 showTab("today");
+importSyncFromHash();
 
 </script>
 </body>
